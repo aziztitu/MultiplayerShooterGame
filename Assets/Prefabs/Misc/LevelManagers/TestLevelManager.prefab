@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7459183772226427006}
-  - component: {fileID: 7459183772226427005}
+  - component: {fileID: 3095056858888250275}
+  - component: {fileID: 867888050021731983}
   m_Layer: 0
   m_Name: TestLevelManager
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7459183772226427005
+--- !u!114 &3095056858888250275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +41,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 7459183772226427007}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4bfced3cb74c8241baa1efd62b89c22, type: 3}
+  m_Script: {fileID: 11500000, guid: 7bba028eefd944babd1e14774b55dc35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   LocalPlayerModel: {fileID: 0}
+--- !u!114 &867888050021731983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7459183772226427007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80591922ed854f9db66058e7f866fb8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
