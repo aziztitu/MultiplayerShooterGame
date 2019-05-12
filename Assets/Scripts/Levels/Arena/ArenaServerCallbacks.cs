@@ -34,7 +34,7 @@ public class ArenaServerCallbacks : Bolt.GlobalEventListener
             }
             else
             {
-                var spawnPlayerEvent = SpawnPlayerEvent.Create(connection);
+                var spawnPlayerEvent = SpawnPlayerEvent.Create(connection, ReliabilityModes.ReliableOrdered);
                 spawnPlayerEvent.Position = spawnPoint.position;
                 spawnPlayerEvent.Rotation = spawnPoint.rotation;
                 spawnPlayerEvent.Send();
