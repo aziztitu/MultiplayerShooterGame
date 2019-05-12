@@ -26,49 +26,38 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     {
     }
 
-    public override void SimulateController()
+    public override void SimulateOwner()
     {
-        base.SimulateController();
-//        UpdateShooting();
+        base.SimulateOwner();
+        
+        PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
+        UpdateShooting(playerInput);
     }
 
-    public override void ExecuteCommand(Command command, bool resetState)
-    {
-        base.ExecuteCommand(command, resetState);
 
-        PlayerCommand playerCommand = (PlayerCommand) command;
-        if (resetState)
-        {
-        }
-        else
-        {
-            UpdateShooting(playerCommand.Input);
-        }
-    }
-
-    void UpdateShooting(IPlayerCommandInput playerCommandInput)
+    void UpdateShooting(PlayerInputController.PlayerInput playerInput)
     {
-        switch ((CinemachineCameraManager.CinemachineCameraState) playerCommandInput.CamState)
+        switch (CinemachineCameraManager.Instance.CurrentState)
         {
             case CinemachineCameraManager.CinemachineCameraState.FirstPerson:
-                FirstPersonShooting(playerCommandInput);
+                FirstPersonShooting(playerInput);
                 break;
             case CinemachineCameraManager.CinemachineCameraState.ThirdPerson:
-                ThirdPersonShooting(playerCommandInput);
+                ThirdPersonShooting(playerInput);
                 break;
             default:
                 return;
         }
 
-        _animator.SetBool("IsAiming", playerCommandInput.Aim);
-        _animator.SetBool("IsShooting", playerCommandInput.Fire);
+        _animator.SetBool("IsAiming", playerInput.aim);
+        _animator.SetBool("IsShooting", playerInput.fire);
     }
 
-    void FirstPersonShooting(IPlayerCommandInput playerCommandInput)
+    void FirstPersonShooting(PlayerInputController.PlayerInput playerInput)
     {
     }
 
-    void ThirdPersonShooting(IPlayerCommandInput playerCommandInput)
+    void ThirdPersonShooting(PlayerInputController.PlayerInput playerInput)
     {
     }
 }

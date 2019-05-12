@@ -6,7 +6,6 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
 {
     public Transform thirdPersonCamTarget;
     public Transform firstPersonCamTransform;
-    public BoltConnection connection;
 
     #region Accessors/Mutators
 
@@ -35,16 +34,6 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
             return _playerMovementController;
         }
     }
-
-    /**
-     * Only Valid in server
-     */
-    public bool IsServer => connection == null;
-
-    /**
-     * Only Valid in server
-     */
-    public bool IsClient => connection != null;
 
     public FirstPersonCamera firstPersonCamera { get; private set; }
     public ThirdPersonPlayerCamera thirdPersonPlayerCamera { get; private set; }

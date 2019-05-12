@@ -19,7 +19,7 @@ public class ArenaServerCallbacks : Bolt.GlobalEventListener
     public override void SceneLoadRemoteDone(BoltConnection connection)
     {
         base.SceneLoadRemoteDone(connection);
-        
+
         OnSceneReady(connection);
     }
 
@@ -28,7 +28,17 @@ public class ArenaServerCallbacks : Bolt.GlobalEventListener
         Transform spawnPoint = _spawnPointsRandomizer.GetRandomItem();
         if (spawnPoint != null)
         {
-            NetworkPlayerRegistry.SpawnPlayer(spawnPoint.position, spawnPoint.rotation, connection);
+            if (connection == null)
+            {
+                ArenaCallbacks.SpawnPlayer(spawnPoint.transform.position, spawnPoint.transform.rotation);
+            }
+            else
+            {
+                var spawnPlayerEvent = SpawnPlayerEvent.Create(connection);
+                spawnPlayerEvent.Position = spawnPoint.position;
+                spawnPlayerEvent.Rotation = spawnPoint.rotation;
+                spawnPlayerEvent.Send();
+            }
         }
     }
 }

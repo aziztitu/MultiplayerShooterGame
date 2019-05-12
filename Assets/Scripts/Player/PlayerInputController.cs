@@ -32,28 +32,9 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
     {
     }
 
-    public override void SimulateController()
+    public override void SimulateOwner()
     {
-        base.SimulateController();
-
         UpdatePlayerInput();
-
-        IPlayerCommandInput playerCommandInput = PlayerCommand.Create();
-
-        playerCommandInput.Forward = _playerInput.forward;
-        playerCommandInput.Strafe = _playerInput.strafe;
-        playerCommandInput.Sprint = _playerInput.sprint;
-        playerCommandInput.Fire = _playerInput.fire;
-        playerCommandInput.Aim = _playerInput.aim;
-
-        Transform camTransform =
-            CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform;
-
-        playerCommandInput.CamState = (int) CinemachineCameraManager.Instance.CurrentState;
-        playerCommandInput.CamForward = camTransform.forward;
-        playerCommandInput.CamRight = camTransform.right;
-
-        entity.QueueInput(playerCommandInput);
     }
 
     public PlayerInput GetPlayerInput()
