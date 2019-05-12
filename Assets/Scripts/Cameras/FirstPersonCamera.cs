@@ -18,11 +18,12 @@ public class FirstPersonCamera : StatefulCinemachineCamera
     protected override void OnActivated()
     {
         VirtualCamera.Follow = LevelManager.Instance.LocalPlayerModel.firstPersonCamTransform;
+        HelperUtilities.UpdateCursorLock(true);
     }
 
     protected override void OnDeactivated()
     {
-        
+        HelperUtilities.UpdateCursorLock(false);
     }
 
     new void Start()
