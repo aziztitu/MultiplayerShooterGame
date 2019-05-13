@@ -3,7 +3,7 @@ using Bolt;
 using JetBrains.Annotations;
 using UnityEngine;
 
-[BoltGlobalBehaviour("ArenaTestScene")]
+[BoltGlobalBehaviour(@"Arena.*")]
 public class ArenaCallbacks : Bolt.GlobalEventListener
 {
     public static void SpawnPlayer(Vector3 spawnPos, Quaternion spawnRot)
