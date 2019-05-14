@@ -9,7 +9,6 @@ public class FirstPersonCamera : StatefulCinemachineCamera
 
     private CameraInputController _cameraInputController;
     private Animator _animator;
-    private float regularFOV;
 
     new void Awake()
     {

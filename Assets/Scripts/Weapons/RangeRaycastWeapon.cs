@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Weapons/Info/Range Weapon (Raycast)", fileName = "Range Raycast Weapon")]
 public class RangeRaycastWeaponInfoAsset : RangeWeaponInfoAsset
 {
+    public float damage;
     public GameObject hitEffectPrefab;
     public float hitEffectDuration;
 }
@@ -33,6 +34,11 @@ public class RangeRaycastWeapon : RangeWeapon
     protected void OnHitObject(RaycastHit raycastHit)
     {
         Debug.Log("Hit Object: " + raycastHit.transform.gameObject.name);
-        // TODO: TBI
+
+        Shootable shootable = raycastHit.rigidbody.GetComponent<Shootable>();
+        if (shootable)
+        {
+            shootable.OnShot(weaponInfoAsset.damage, raycastHit.point);
+        }
     }
 }
