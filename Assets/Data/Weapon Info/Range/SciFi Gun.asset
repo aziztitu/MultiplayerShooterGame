@@ -15,8 +15,9 @@ MonoBehaviour:
   weaponPrefab: {fileID: 2400769930006542929, guid: d391944d118c35a41b253dda6f6db96f,
     type: 3}
   bulletsPerRound: 30
-  fireRate: 3
+  fireRate: 15
   maxRange: 50
+  damage: 10
   hitEffectPrefab: {fileID: 1570927096764274, guid: 643639841fb531e4ba8097fed4eb9ac7,
     type: 3}
   hitEffectDuration: 0.5
