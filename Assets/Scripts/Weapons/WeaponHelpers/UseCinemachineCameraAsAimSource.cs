@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(RangeWeapon))]
 public class UseCinemachineCameraAsAimSource: MonoBehaviour
 {
-    public RangeWeapon rangeWeapon;
+    private RangeWeapon rangeWeapon;
 
     private void Awake()
     {

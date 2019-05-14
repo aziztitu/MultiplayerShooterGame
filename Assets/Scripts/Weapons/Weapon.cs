@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ public abstract class WeaponInfoAsset : ScriptableObject
 public abstract class Weapon : MonoBehaviour
 {
     public WeaponInfoAsset weaponInfoAsset;
+    public abstract Type InfoAssetType { get; }
 
     public T GetWeaponInfoAsset<T>() where T : WeaponInfoAsset
     {
@@ -32,5 +34,17 @@ public abstract class Weapon : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
+    }
+
+    private void OnValidate()
+    {
+        if (weaponInfoAsset)
+        {
+            if (weaponInfoAsset.GetType() != InfoAssetType)
+            {
+                weaponInfoAsset = null;
+                Debug.LogError("Please use a weapon info asset of type: " + InfoAssetType.Name);
+            }
+        }
     }
 }

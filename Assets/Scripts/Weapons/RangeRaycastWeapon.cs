@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Weapons/Info/Range Weapon (Raycast)", fileName = "Range Raycast Weapon")]
@@ -9,8 +10,9 @@ public class RangeRaycastWeaponInfoAsset : RangeWeaponInfoAsset
 
 public class RangeRaycastWeapon : RangeWeapon
 {
+    public override Type InfoAssetType => typeof(RangeRaycastWeaponInfoAsset);
     public new RangeRaycastWeaponInfoAsset weaponInfoAsset => GetWeaponInfoAsset<RangeRaycastWeaponInfoAsset>();
-    
+
     protected override void OnShotFired()
     {
         Transform src = aimSource ? aimSource : muzzle;

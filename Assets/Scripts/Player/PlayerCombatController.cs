@@ -60,6 +60,11 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     void FirstPersonShooting(PlayerInputController.PlayerInput playerInput, out bool shotFired)
     {
         shotFired = false;
+
+        if (playerInput.aim)
+        {
+            
+        }
         
         if (playerInput.fire)
         {
@@ -70,5 +75,10 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     void ThirdPersonShooting(PlayerInputController.PlayerInput playerInput, out bool shotFired)
     {
         shotFired = false;
+        
+        if (playerInput.fire)
+        {
+            shotFired = rangeWeapon.Shoot();
+        }
     }
 }

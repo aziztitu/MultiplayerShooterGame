@@ -16,8 +16,9 @@ public abstract class RangeWeapon : Weapon
 
 //    [Button("Shoot", "Shoot")] public bool btn_Shoot;
 
+    public override Type InfoAssetType => typeof(RangeWeaponInfoAsset);
     public new RangeWeaponInfoAsset weaponInfoAsset => GetWeaponInfoAsset<RangeWeaponInfoAsset>();
-    
+
     [SerializeField]
     protected int roundsLeft = 5;
     protected int bulletsInCurrentRound = 0;
