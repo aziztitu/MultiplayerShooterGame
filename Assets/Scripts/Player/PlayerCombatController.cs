@@ -9,11 +9,14 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     private CharacterController _characterController;
     private Animator _animator;
 
+    private RangeWeapon rangeWeapon;
+
     void Awake()
     {
         _playerModel = GetComponent<PlayerModel>();
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
+        rangeWeapon = GetComponentInChildren<RangeWeapon>();
     }
 
     // Start is called before the first frame update
@@ -37,27 +40,35 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
 
     void UpdateShooting(PlayerInputController.PlayerInput playerInput)
     {
+        bool shotFired = false;
         switch (CinemachineCameraManager.Instance.CurrentState)
         {
             case CinemachineCameraManager.CinemachineCameraState.FirstPerson:
-                FirstPersonShooting(playerInput);
+                FirstPersonShooting(playerInput, out shotFired);
                 break;
             case CinemachineCameraManager.CinemachineCameraState.ThirdPerson:
-                ThirdPersonShooting(playerInput);
+                ThirdPersonShooting(playerInput, out shotFired);
                 break;
             default:
                 return;
         }
 
         _animator.SetBool("IsAiming", playerInput.aim);
-        _animator.SetBool("IsShooting", playerInput.fire);
+        _animator.SetBool("IsShooting", playerInput.fire && shotFired);
     }
 
-    void FirstPersonShooting(PlayerInputController.PlayerInput playerInput)
+    void FirstPersonShooting(PlayerInputController.PlayerInput playerInput, out bool shotFired)
     {
+        shotFired = false;
+        
+        if (playerInput.fire)
+        {
+            shotFired = rangeWeapon.Shoot();
+        }
     }
 
-    void ThirdPersonShooting(PlayerInputController.PlayerInput playerInput)
+    void ThirdPersonShooting(PlayerInputController.PlayerInput playerInput, out bool shotFired)
     {
+        shotFired = false;
     }
 }

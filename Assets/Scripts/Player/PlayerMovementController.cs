@@ -82,8 +82,8 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         float curSpeedFactor = HelperUtilities.Remap(curSpeed, 0, targetSpeed, 0, 1);
         animVector *= curSpeedFactor;
 
-        Debug.Log("Strafe: " + animVector.x);
-        Debug.Log("Forward: " + animVector.z);
+//        Debug.Log("Strafe: " + animVector.x);
+//        Debug.Log("Forward: " + animVector.z);
 
         _animator.SetFloat("Strafe", animVector.x);
         _animator.SetFloat("Forward", animVector.z);
