@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SingletonMonoBehaviour<T>: MonoBehaviour where T: SingletonMonoBehaviour<T>
 {
@@ -8,6 +11,8 @@ public class SingletonMonoBehaviour<T>: MonoBehaviour where T: SingletonMonoBeha
     {
         return Instance as U;
     }
+
+    private static readonly List<Action<T>> OnSingletonReadyListeners = new List<Action<T>>();
 
     protected void Awake()
     {
@@ -19,6 +24,25 @@ public class SingletonMonoBehaviour<T>: MonoBehaviour where T: SingletonMonoBeha
         else
         {
             Instance = this as T;
+            CallOnSingletonReadyListeners();
         } 
+    }
+
+    private static void CallOnSingletonReadyListeners()
+    {
+        foreach (var onSingletonReadyListener in OnSingletonReadyListeners)
+        {
+            onSingletonReadyListener(Instance);
+        }
+    }
+
+    public static void AddOnSingletonReadyListener(Action<T> action)
+    {
+        if (Instance != null)
+        {
+            action(Instance);
+        }
+        
+        OnSingletonReadyListeners.Add(action);
     }
 }

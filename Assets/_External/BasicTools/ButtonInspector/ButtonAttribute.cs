@@ -67,7 +67,7 @@ namespace BasicTools.ButtonInspector {
 				if (GUI.Button(position, button.text)) {
 					if (string.IsNullOrEmpty(button.method) == false) {
 						if (method == null) {
-							method = property.serializedObject.targetObject.GetType().GetMethod(button.method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+							method = property.serializedObject.targetObject.GetType().GetMethod(button.method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 						}
 						method.Invoke(property.serializedObject.targetObject, null);
 					}

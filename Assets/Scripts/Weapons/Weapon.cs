@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class WeaponInfoAssetBase: ScriptableObject
+public abstract class WeaponInfoAsset : ScriptableObject
 {
     /*public enum WeaponType
     {
@@ -15,19 +15,22 @@ public abstract class WeaponInfoAssetBase: ScriptableObject
     public GameObject weaponPrefab;
 }
 
-public abstract class WeaponBase<T> : MonoBehaviour where T: WeaponInfoAssetBase
+public abstract class Weapon : MonoBehaviour
 {
-    public T weaponInfoAsset;
-    
+    public WeaponInfoAsset weaponInfoAsset;
+
+    public T GetWeaponInfoAsset<T>() where T : WeaponInfoAsset
+    {
+        return weaponInfoAsset as T;
+    }
+
     // Start is called before the first frame update
     protected void Start()
     {
-        
     }
 
     // Update is called once per frame
     protected void Update()
     {
-        
     }
 }

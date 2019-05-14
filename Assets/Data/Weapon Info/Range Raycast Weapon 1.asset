@@ -14,3 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangeRaycastWeaponInfoAsset
   weaponPrefab: {fileID: 8370073611782090201, guid: 4718e82eb7d576c44aadb9411b58b559,
     type: 3}
+  bulletsPerRound: 30
+  fireRate: 2
+  maxRange: 50
+  hitEffectPrefab: {fileID: 1570927096764274, guid: 643639841fb531e4ba8097fed4eb9ac7,
+    type: 3}
+  hitEffectDuration: 0.5
