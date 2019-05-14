@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Bolt;
+using Cinemachine;
 using UnityEngine;
 
 public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
@@ -60,8 +61,12 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     void FirstPersonShooting(PlayerInputController.PlayerInput playerInput, out bool shotFired)
     {
         shotFired = false;
-
+        
         if (playerInput.aim)
+        {
+            
+        }
+        else
         {
             
         }

@@ -8,11 +8,14 @@ public class FirstPersonCamera : StatefulCinemachineCamera
     public float maxCamAngle;
 
     private CameraInputController _cameraInputController;
+    private Animator _animator;
+    private float regularFOV;
 
     new void Awake()
     {
         base.Awake();
         _cameraInputController = GetComponent<CameraInputController>();
+        _animator = GetComponent<Animator>();
     }
 
     protected override void OnActivated()
@@ -33,16 +36,16 @@ public class FirstPersonCamera : StatefulCinemachineCamera
 
     private void FixedUpdate()
     {
-        RotateCamera();
+        CameraInputController.CameraInput cameraInput = _cameraInputController.GetCameraInput();
+        UpdateForCombat(cameraInput);
+        RotateCamera(cameraInput);
     }
 
-    void RotateCamera()
+    void RotateCamera(CameraInputController.CameraInput cameraInput)
     {
-        CameraInputController.CameraInput playerInput = _cameraInputController.GetCameraInput();
-
         Vector3 targetRotationAngle = transform.localRotation.eulerAngles;
-        targetRotationAngle.x += playerInput.camVertical;
-        targetRotationAngle.y += playerInput.camHorizontal;
+        targetRotationAngle.x += cameraInput.camVertical;
+        targetRotationAngle.y += cameraInput.camHorizontal;
 
         targetRotationAngle.x = HelperUtilities.ClampAngle(targetRotationAngle.x, minCamAngle, maxCamAngle);
         targetRotationAngle.y = Mathf.Repeat(targetRotationAngle.y, 360f);
@@ -51,5 +54,10 @@ public class FirstPersonCamera : StatefulCinemachineCamera
         transform.localRotation = Quaternion.Slerp(transform.localRotation,
             Quaternion.Euler(targetRotationAngle),
             Time.fixedDeltaTime * camRotationSpeed);
+    }
+
+    void UpdateForCombat(CameraInputController.CameraInput cameraInput)
+    {
+        _animator.SetBool("isAiming", cameraInput.aim);
     }
 }
