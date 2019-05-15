@@ -42,6 +42,10 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
         }
     }
 
+    public CinemachineBrain CinemachineBrain { get; private set; }
+
+    public Camera OutputCamera { get; private set; }
+
     [SerializeField] private CinemachineCameraState _currentState = CinemachineCameraState.ThirdPerson;
     [SerializeField] private CinemachineCameraState _prevReturnableState = CinemachineCameraState.None;
 
@@ -62,6 +66,9 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
 
     new void Awake()
     {
+        OutputCamera = GetComponentInChildren<Camera>();
+        CinemachineBrain = GetComponentInChildren<CinemachineBrain>();
+        
         base.Awake();
         RefreshStatefulCameras();
     }

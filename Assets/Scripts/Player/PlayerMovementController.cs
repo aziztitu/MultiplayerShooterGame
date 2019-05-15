@@ -41,14 +41,16 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (entity.IsOwner)
+        {
+            PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
+            Move(playerInput);
+        }
     }
 
     public override void SimulateOwner()
     {
         base.SimulateOwner();
-        
-        PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
-        Move(playerInput);
     }
 
     void ApplyGravityIfNeeded()
@@ -96,10 +98,9 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     {
         Vector3 moveVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
 
-        CinemachineVirtualCameraBase curVirtualCamera =
-            CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera;
-        Vector3 forwardDir = curVirtualCamera.transform.forward;
-        Vector3 rightDir = curVirtualCamera.transform.right;
+        Camera outputCamera = CinemachineCameraManager.Instance.OutputCamera;
+        Vector3 forwardDir = outputCamera.transform.forward;
+        Vector3 rightDir = outputCamera.transform.right;
 
         forwardDir.y = 0;
         rightDir.y = 0;
@@ -145,10 +146,9 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 
         Vector3 moveVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
 
-        CinemachineVirtualCameraBase curVirtualCamera =
-            CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera;
-        Vector3 forwardDir = curVirtualCamera.transform.forward;
-        Vector3 rightDir = curVirtualCamera.transform.right;
+        Camera outputCamera = CinemachineCameraManager.Instance.OutputCamera;
+        Vector3 forwardDir = outputCamera.transform.forward;
+        Vector3 rightDir = outputCamera.transform.right;
 
         forwardDir.y = 0;
         rightDir.y = 0;

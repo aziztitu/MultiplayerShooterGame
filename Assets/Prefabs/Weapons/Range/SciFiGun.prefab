@@ -1502,7 +1502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e65b6dc10143599438b0459dc1a593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponInfoAsset: {fileID: 11400000, guid: ac3e55953f8cb464ab48d7c0eb9ad0fa, type: 2}
+  weaponInfoAsset: {fileID: 11400000, guid: 6a4f281cfe040ee42888485a4877ec26, type: 2}
   aimSource: {fileID: 0}
   muzzle: {fileID: 7642922771069458251}
   roundsLeft: 5

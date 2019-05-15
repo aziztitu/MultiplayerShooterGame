@@ -33,10 +33,15 @@ public class FirstPersonCamera : StatefulCinemachineCamera
         base.Start();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         CameraInputController.CameraInput cameraInput = _cameraInputController.GetCameraInput();
         UpdateForCombat(cameraInput);
+    }
+
+    private void FixedUpdate()
+    {
+        CameraInputController.CameraInput cameraInput = _cameraInputController.GetCameraInput();
         RotateCamera(cameraInput);
     }
 

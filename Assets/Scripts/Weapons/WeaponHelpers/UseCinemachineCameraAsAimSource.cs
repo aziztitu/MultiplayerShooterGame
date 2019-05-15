@@ -14,15 +14,12 @@ public class UseCinemachineCameraAsAimSource: MonoBehaviour
         {
             Debug.Log(instance);
             RefreshAimSource();
-            instance.onCinemachineCameraStateUpdated.AddListener((curState) => { RefreshAimSource(); });
+//            instance.onCinemachineCameraStateUpdated.AddListener((curState) => { RefreshAimSource(); });
         });
     }
 
     private void RefreshAimSource()
     {
-        if (CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera != null)
-        {
-            rangeWeapon.aimSource = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.transform;
-        }
+        rangeWeapon.aimSource = CinemachineCameraManager.Instance.OutputCamera.transform;
     }
 }

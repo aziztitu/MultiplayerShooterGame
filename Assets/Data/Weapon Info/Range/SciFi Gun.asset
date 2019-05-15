@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: ac63e1b899b140fd916bf25746e402fb, type: 3}
   m_Name: SciFi Gun
-  m_EditorClassIdentifier: Assembly-CSharp::RangeRaycastWeaponInfoAsset
+  m_EditorClassIdentifier: 
   weaponPrefab: {fileID: 2400769930006542929, guid: d391944d118c35a41b253dda6f6db96f,
     type: 3}
   bulletsPerRound: 30
