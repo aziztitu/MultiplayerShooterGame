@@ -5,20 +5,25 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ArenaLevelManager: LevelManager
+public class ArenaLevelManager : LevelManager
 {
     public GameObject CinemachineCameraRigPrefab;
-    
+
     public GameObject WinScreen;
     public GameObject LoseScreen;
-    public GameObject FadeOut; 
-    
-    public string MainMenuSceneName = "MainMenu";
+    public GameObject FadeOut;
+
+    public string LobbySceneName = "LobbyMenu";
     public string EndGameCreditsSceneName = "EndCredits";
-    
+
     public List<Transform> SpawnPoints;
 
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
+
+    private new void Awake()
+    {
+        base.Awake();
+    }
 
     IEnumerator GameLost()
     {
@@ -52,8 +57,14 @@ public class ArenaLevelManager: LevelManager
         SceneManager.LoadScene(EndGameCreditsSceneName);
     }
 
-    public void GoToMainMenu()
+    public void GoToLobby(float delay)
     {
-        SceneManager.LoadScene(MainMenuSceneName);
+        StartCoroutine(GoToLobbyAfterSecs(delay));
+    }
+
+    IEnumerator GoToLobbyAfterSecs(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        SceneManager.LoadScene(LobbySceneName);
     }
 }

@@ -21,7 +21,7 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
         ThirdPerson,
         OverTheShoulder,
         EventLock,
-        Research,
+        FreeFly,
     }
 
     public CinemachineCameraState CurrentState => _currentState;
@@ -68,7 +68,7 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
     {
         OutputCamera = GetComponentInChildren<Camera>();
         CinemachineBrain = GetComponentInChildren<CinemachineBrain>();
-        
+
         base.Awake();
         RefreshStatefulCameras();
     }
@@ -82,6 +82,11 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
     void Update()
     {
         CheckAndSwitchCamera();
+
+        if (Input.GetKeyDown(KeyCode.End))
+        {
+            HelperUtilities.UpdateCursorLock(Cursor.visible);
+        }
     }
 
     void CheckAndSwitchCamera(object stateData = null)

@@ -10,4 +10,12 @@ public class GlobalNetworkCallbacks : Bolt.GlobalEventListener
         base.OnEvent(evnt);
         evnt.TargetPlayerEntity.GetComponent<Health>().OnEvent(evnt);
     }
+
+    private void OnApplicationQuit()
+    {
+        if (BoltNetwork.IsRunning)
+        {
+            BoltNetwork.ShutdownImmediate();
+        }
+    }
 }

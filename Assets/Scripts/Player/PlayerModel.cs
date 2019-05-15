@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
 {
@@ -9,32 +11,11 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
 
     #region Accessors/Mutators
 
-    public PlayerInputController playerInputController
-    {
-        get
-        {
-            if (_playerInputController == null)
-            {
-                _playerInputController = GetComponent<PlayerInputController>();
-            }
-
-            return _playerInputController;
-        }
-    }
-
-    public PlayerMovementController playerMovementController
-    {
-        get
-        {
-            if (_playerMovementController == null)
-            {
-                _playerMovementController = GetComponent<PlayerMovementController>();
-            }
-
-            return _playerMovementController;
-        }
-    }
-
+    public PlayerInputController playerInputController { get; private set; }
+    public PlayerMovementController playerMovementController { get; private set; }
+    public PlayerCombatController playerCombatController { get; private set; }
+    public PlayerHUDController playerHUDController { get; private set; }
+    public Health health { get; private set; }
     public FirstPersonCamera firstPersonCamera { get; private set; }
     public ThirdPersonPlayerCamera thirdPersonPlayerCamera { get; private set; }
 
@@ -47,6 +28,25 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
     void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
+        playerMovementController = GetComponent<PlayerMovementController>();
+        playerInputController = GetComponent<PlayerInputController>();
+        playerCombatController = GetComponent<PlayerCombatController>();
+        playerHUDController = GetComponentInChildren<PlayerHUDController>();
+        health = GetComponent<Health>();
+
+        health.OnDeath.AddListener((() =>
+        {
+            BoltNetwork.Destroy(gameObject);
+
+            Transform prevCameraTransform = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera
+                .VirtualCamera.transform;
+            CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+                .FreeFly);
+            /*CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.position =
+                prevCameraTransform.position;
+            CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.rotation =
+                prevCameraTransform.rotation;*/
+        }));
     }
 
     // Use this for initialization
@@ -64,6 +64,8 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
     {
         base.Attached();
         SetupState();
+
+        playerHUDController.gameObject.SetActive(entity.IsOwner);
     }
 
     public void SetupState()

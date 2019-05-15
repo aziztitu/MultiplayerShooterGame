@@ -10,7 +10,9 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     public float maxRunSpeed = 0.2f;
     public float acceleration = 2f;
     public float deceleration = 2f;
-    public float turnSpeed = 3f;
+//    public float turnSpeed = 3f;
+    public float gravityForce = -9.81f;
+    public float jumpForce = 40f;
 
 //    public float rotationSpeed = 3;
 //    public float dodgeSpeed = 10;
@@ -20,6 +22,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     private CharacterController _characterController;
     private Animator _animator;
 
+    private bool isSprinting;
     private float curSpeed = 0;
 
     void Awake()
@@ -44,7 +47,11 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         if (entity.IsOwner)
         {
             PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
+            isSprinting = IsSprinting(playerInput);
+
             Move(playerInput);
+            AddJumpForceAsNeeded(playerInput);
+            ApplyGravityIfNeeded();
         }
     }
 
@@ -55,6 +62,10 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 
     void ApplyGravityIfNeeded()
     {
+        if (!_characterController.isGrounded)
+        {
+            _characterController.Move(Vector3.up * gravityForce * BoltNetwork.FrameDeltaTime);
+        }
     }
 
     void Move(PlayerInputController.PlayerInput playerInput)
@@ -71,8 +82,6 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
             default:
                 return;
         }
-        
-        bool isSprinting = IsSprinting(playerInput);
 
         // Move Animation
         Vector3 animVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
@@ -90,7 +99,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         _animator.SetFloat("Strafe", animVector.x);
         _animator.SetFloat("Forward", animVector.z);
 //        _animator.SetBool("IsMoving", curSpeedFactor > 0);
-        _animator.SetBool("IsGrounded", true);
+        _animator.SetBool("IsGrounded", _characterController.isGrounded);
         _animator.SetBool("IsSprinting", isSprinting);
     }
 
@@ -161,8 +170,6 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
             moveVector.Normalize();
         }
 
-        bool isSprinting = IsSprinting(playerInput);
-
         targetSpeed = 0;
         if (moveVector.magnitude > 0)
         {
@@ -195,10 +202,15 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         _characterController.Move(moveVector * curSpeed);
     }
 
+    void AddJumpForceAsNeeded(PlayerInputController.PlayerInput playerInput)
+    {
+        // TODO: Implement jumping
+    }
+
     bool IsSprinting(PlayerInputController.PlayerInput playerInput)
     {
         return (playerInput.sprint && !playerInput.aim && ((playerInput.forward > 0) ||
-                                                                         (!(playerInput.forward < 0) &&
-                                                                          Mathf.Abs(playerInput.strafe) > 0)));
+                                                           (!(playerInput.forward < 0) &&
+                                                            Mathf.Abs(playerInput.strafe) > 0)));
     }
 }

@@ -25,6 +25,7 @@ public abstract class StatefulCinemachineCamera : MonoBehaviour
     protected void Awake()
     {
         _virtualCamera = GetComponentInChildren<CinemachineVirtualCameraBase>();
+        _virtualCamera.enabled = false;
         Debug.Log("Assigning Virtual Camera: " + VirtualCamera);
     }
 

@@ -417,7 +417,7 @@
           }
         },
         {
-          "Name": "UpdatedHealth",
+          "Name": "DeltaHealth",
           "Enabled": true,
           "Expanded": true,
           "ReplicationMode": 1,

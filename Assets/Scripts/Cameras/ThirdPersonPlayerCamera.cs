@@ -46,6 +46,9 @@ public class ThirdPersonPlayerCamera : StatefulCinemachineCamera
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!target)
+            return;
+        
         UpdatePosition();
         UpdateRotation();
     }

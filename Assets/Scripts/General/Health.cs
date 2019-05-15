@@ -9,7 +9,7 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
     public string healthProperty = "Health";
     public UnityEvent OnDeath;
 
-    private float maxhealth = 100f;
+    public float maxhealth { get; private set; } = 100f;
 
     public bool isAlive { get; private set; } = true;
 
@@ -59,27 +59,26 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
 
     public void TakeDamage(float damage, Vector3 hitPos)
     {
-        float stateHealth = (float) state.GetDynamic(healthProperty);
-        SetStateHealth(stateHealth - damage);
+        UpdateStateHealth(-damage);
     }
 
     public void Heal(float healthGained)
     {
-        float stateHealth = (float) state.GetDynamic(healthProperty);
-        SetStateHealth(stateHealth + healthGained);
+        UpdateStateHealth(healthGained);
     }
 
-    private void SetStateHealth(float stateHealth)
+    private void UpdateStateHealth(float deltaHealth)
     {
-        stateHealth = Mathf.Clamp(stateHealth, 0, maxhealth);
         if (entity.IsOwner)
         {
+            float stateHealth = (float) state.GetDynamic(healthProperty);
+            stateHealth = Mathf.Clamp(stateHealth + deltaHealth, 0, maxhealth);
             state.SetDynamic(healthProperty, stateHealth);
         }
         else
         {
             UpdatePlayerHealthEvent e = UpdatePlayerHealthEvent.Create(entity.Source, ReliabilityModes.ReliableOrdered);
-            e.UpdatedHealth = stateHealth;
+            e.DeltaHealth = deltaHealth;
             e.TargetPlayerEntity = entity;
             e.Send();
         }
@@ -104,7 +103,7 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
         base.OnEvent(evnt);
         if (entity.IsOwner)
         {
-            SetStateHealth(evnt.UpdatedHealth);
+            UpdateStateHealth(evnt.DeltaHealth);
         }
     }
 }

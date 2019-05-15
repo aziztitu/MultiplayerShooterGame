@@ -2,19 +2,35 @@ using System;
 using System.Collections.Generic;
 using UdpKit;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class LobbyMenu: Bolt.GlobalEventListener
+public class LobbyMenu : Bolt.GlobalEventListener
 {
     public string arenaSceneName = "ArenaTestScene";
-    
+
+    public Button serverBtn;
+    public Button clientBtn;
+
+    private void Awake()
+    {
+        HelperUtilities.UpdateCursorLock(false);
+        if (BoltNetwork.IsRunning)
+        {
+            BoltLauncher.Shutdown();
+        }
+    }
+
     public void CreateGame()
     {
         BoltLauncher.StartServer();
     }
-    
+
     public void JoinGame()
     {
         BoltLauncher.StartClient();
+        serverBtn.interactable = false;
+        clientBtn.interactable = false;
+        clientBtn.GetComponentInChildren<Text>().text = "Finding match...";
     }
 
     public override void BoltStartDone()
@@ -22,7 +38,7 @@ public class LobbyMenu: Bolt.GlobalEventListener
         if (BoltNetwork.IsServer)
         {
             string matchName = Guid.NewGuid().ToString();
-            
+
             BoltNetwork.SetServerInfo(matchName, null);
             BoltNetwork.LoadScene(arenaSceneName);
         }
@@ -38,7 +54,7 @@ public class LobbyMenu: Bolt.GlobalEventListener
     {
         Debug.LogFormat("Session list updated: {0} total sessions", sessionList.Count);
 
-        foreach (KeyValuePair<Guid,UdpSession> pair in sessionList)
+        foreach (KeyValuePair<Guid, UdpSession> pair in sessionList)
         {
             UdpSession session = pair.Value;
 
@@ -47,5 +63,5 @@ public class LobbyMenu: Bolt.GlobalEventListener
                 BoltNetwork.Connect(session);
             }
         }
-    }       
+    }
 }

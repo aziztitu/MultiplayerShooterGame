@@ -12,9 +12,8 @@ public abstract class RangeWeapon : Weapon
     public override Type InfoAssetType => typeof(RangeWeaponInfoAsset);
     public new RangeWeaponInfoAsset weaponInfoAsset => GetWeaponInfoAsset<RangeWeaponInfoAsset>();
 
-    [SerializeField]
-    protected int roundsLeft = 5;
-    protected int bulletsInCurrentRound = 0;
+    [SerializeField] public int roundsLeft { get; protected set; } = 5;
+    public int bulletsInCurrentRound { get; protected set; } = 0;
 
     private float nextFireableTime = 0;
 

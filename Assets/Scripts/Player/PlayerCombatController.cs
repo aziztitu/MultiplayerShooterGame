@@ -10,7 +10,7 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     private CharacterController _characterController;
     private Animator _animator;
 
-    private RangeWeapon rangeWeapon;
+    public RangeWeapon rangeWeapon { get; private set; }
 
     void Awake()
     {

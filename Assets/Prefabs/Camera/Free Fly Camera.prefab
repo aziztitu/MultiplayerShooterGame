@@ -100,3 +100,4 @@ MonoBehaviour:
   normalMoveSpeed: 10
   slowMoveFactor: 0.25
   fastMoveFactor: 3
+  DisableOnAwake: 0

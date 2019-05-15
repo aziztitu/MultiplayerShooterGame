@@ -48,7 +48,7 @@ MonoBehaviour:
   debugStartPort: 50538
   debugStartMapName: ArenaTestScene
   debugPlayAsServer: 1
-  showDebugInfo: 1
+  showDebugInfo: 0
   overrideTimeScale: 1
   logUncaughtExceptions: 0
   debugEditorMode: 1
@@ -63,7 +63,7 @@ MonoBehaviour:
   serializeProjectAsText: 0
   photonAppId: 2afa58b1-4b1d-4a27-93f3-57409a63b89f
   photonUsePunch: 1
-  photonCloudRegionIndex: 0
+  photonCloudRegionIndex: 12
   instantiateMode: 2
   globalEntityBehaviourQueryOption: 3
   globalEntityPriorityCalculatorQueryOption: 3

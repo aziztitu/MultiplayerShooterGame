@@ -461,6 +461,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arenaSceneName: ArenaTestScene
+  serverBtn: {fileID: 2019901475}
+  clientBtn: {fileID: 1065642258}
 --- !u!1 &3562040245052936127
 GameObject:
   m_ObjectHideFlags: 0
