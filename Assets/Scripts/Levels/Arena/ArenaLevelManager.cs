@@ -9,11 +9,13 @@ public class ArenaLevelManager : LevelManager
 {
     public GameObject CinemachineCameraRigPrefab;
 
+    public ArenaMenu arenaMenu;
+    
     public GameObject WinScreen;
     public GameObject LoseScreen;
     public GameObject FadeOut;
 
-    public string LobbySceneName = "LobbyMenu";
+    public string MultiplayerSceneName = "Multiplayer Menu";
     public string EndGameCreditsSceneName = "EndCredits";
 
     public List<Transform> SpawnPoints;
@@ -23,6 +25,15 @@ public class ArenaLevelManager : LevelManager
     private new void Awake()
     {
         base.Awake();
+        arenaMenu.ShowHide(false);
+    }
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("Pause"))
+        {
+            arenaMenu.ToggleShowHide();
+        }
     }
 
     IEnumerator GameLost()
@@ -64,7 +75,11 @@ public class ArenaLevelManager : LevelManager
 
     IEnumerator GoToLobbyAfterSecs(float delay)
     {
-        yield return new WaitForSecondsRealtime(delay);
-        SceneManager.LoadScene(LobbySceneName);
+        if (delay > 0)
+        {
+            yield return new WaitForSecondsRealtime(delay);
+        }
+
+        SceneManager.LoadScene(MultiplayerSceneName);
     }
 }

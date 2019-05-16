@@ -20,6 +20,7 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
         [Header("Movement")] public float forward;
         public float strafe;
         public bool sprint;
+        public bool jump;
 
         [Header("Combat")] public bool fire;
         public bool aim;
@@ -52,6 +53,7 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
         _playerInput.strafe = Input.GetAxis("Horizontal");
         _playerInput.forward = Input.GetAxis("Vertical");
         _playerInput.sprint = Input.GetButton("Sprint");
+        _playerInput.jump = Input.GetButton("Jump");
         _playerInput.fire = Input.GetButton("Fire");
         _playerInput.aim = Input.GetButton("Aim");
     }

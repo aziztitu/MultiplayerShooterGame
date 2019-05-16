@@ -8,6 +8,8 @@ public abstract class LevelManager: SingletonMonoBehaviour<LevelManager>
 {
     public PlayerModel LocalPlayerModel;
 
+    public bool interactingWithUI = false;
+
     public event Action<bool> OnGameOver;
     public bool GameOver { get; protected set; }
 

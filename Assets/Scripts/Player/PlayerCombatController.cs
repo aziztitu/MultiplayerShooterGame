@@ -34,6 +34,9 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     {
         base.SimulateOwner();
         
+        if (LevelManager.Instance.interactingWithUI)
+            return;
+        
         PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
         UpdateShooting(playerInput);
     }

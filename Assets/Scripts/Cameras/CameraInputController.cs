@@ -25,6 +25,12 @@ public class CameraInputController : MonoBehaviour
 
     void Update()
     {
+        if (LevelManager.Instance && LevelManager.Instance.interactingWithUI)
+        {
+            _cameraInput = new CameraInput();
+            return;
+        }
+
         UpdateCameraInput();
     }
 

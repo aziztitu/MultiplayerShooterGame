@@ -13,6 +13,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 //    public float turnSpeed = 3f;
     public float gravityForce = -9.81f;
     public float jumpForce = 40f;
+    public float jumpForceDuration = 3;
 
 //    public float rotationSpeed = 3;
 //    public float dodgeSpeed = 10;
@@ -24,6 +25,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 
     private bool isSprinting;
     private float curSpeed = 0;
+    private float lastJumpTime = float.MinValue;
 
     void Awake()
     {
@@ -44,14 +46,16 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (LevelManager.Instance.interactingWithUI)
+            return;
+        
         if (entity.IsOwner)
         {
             PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
             isSprinting = IsSprinting(playerInput);
 
-            Move(playerInput);
-            AddJumpForceAsNeeded(playerInput);
-            ApplyGravityIfNeeded();
+            Vector3 moveVector = Move(playerInput) + AddJumpForceAsNeeded(playerInput) + ApplyGravityIfNeeded();
+            _characterController.Move(moveVector);
         }
     }
 
@@ -60,27 +64,30 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         base.SimulateOwner();
     }
 
-    void ApplyGravityIfNeeded()
+    Vector3 ApplyGravityIfNeeded()
     {
         if (!_characterController.isGrounded)
         {
-            _characterController.Move(Vector3.up * gravityForce * BoltNetwork.FrameDeltaTime);
+            return (Vector3.up * gravityForce * BoltNetwork.FrameDeltaTime);
         }
+        
+        return Vector3.zero;
     }
 
-    void Move(PlayerInputController.PlayerInput playerInput)
+    Vector3 Move(PlayerInputController.PlayerInput playerInput)
     {
         float targetSpeed = 0;
+        Vector3 moveVector = Vector3.zero;
         switch (CinemachineCameraManager.Instance.CurrentState)
         {
             case CinemachineCameraManager.CinemachineCameraState.FirstPerson:
-                FirstPersonMove(playerInput, out targetSpeed);
+                moveVector = FirstPersonMove(playerInput, out targetSpeed);
                 break;
             case CinemachineCameraManager.CinemachineCameraState.ThirdPerson:
-                ThirdPersonMove(playerInput, out targetSpeed);
+                moveVector = ThirdPersonMove(playerInput, out targetSpeed);
                 break;
             default:
-                return;
+                return moveVector;
         }
 
         // Move Animation
@@ -101,11 +108,13 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 //        _animator.SetBool("IsMoving", curSpeedFactor > 0);
         _animator.SetBool("IsGrounded", _characterController.isGrounded);
         _animator.SetBool("IsSprinting", isSprinting);
+
+        return moveVector;
     }
 
-    void FirstPersonMove(PlayerInputController.PlayerInput playerInput, out float targetSpeed)
+    Vector3 FirstPersonMove(PlayerInputController.PlayerInput playerInput, out float targetSpeed)
     {
-        Vector3 moveVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
+        Vector3 inputVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
 
         Camera outputCamera = CinemachineCameraManager.Instance.OutputCamera;
         Vector3 forwardDir = outputCamera.transform.forward;
@@ -119,18 +128,18 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 
         transform.LookAt(transform.position + (forwardDir * 5), Vector3.up);
 
-        moveVector = forwardDir * playerInput.forward;
-        moveVector += rightDir * playerInput.strafe;
+        inputVector = forwardDir * playerInput.forward;
+        inputVector += rightDir * playerInput.strafe;
 
-        if (moveVector.magnitude > 1)
+        if (inputVector.magnitude > 1)
         {
-            moveVector.Normalize();
+            inputVector.Normalize();
         }
 
         bool isSprinting = IsSprinting(playerInput);
 
         targetSpeed = 0;
-        if (moveVector.magnitude > 0)
+        if (inputVector.magnitude > 0)
         {
             targetSpeed = isSprinting ? maxRunSpeed : maxWalkSpeed;
         }
@@ -146,14 +155,14 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
             curSpeed = Mathf.Max(curSpeed, targetSpeed);
         }
 
-        _characterController.Move(moveVector * curSpeed);
+        return inputVector * curSpeed;
     }
 
-    void ThirdPersonMove(PlayerInputController.PlayerInput playerInput, out float targetSpeed)
+    Vector3 ThirdPersonMove(PlayerInputController.PlayerInput playerInput, out float targetSpeed)
     {
 //        Debug.Log(thirdPersonPlayerCamera);
 
-        Vector3 moveVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
+        Vector3 inputVector = new Vector3(playerInput.strafe, 0, playerInput.forward);
 
         Camera outputCamera = CinemachineCameraManager.Instance.OutputCamera;
         Vector3 forwardDir = outputCamera.transform.forward;
@@ -162,16 +171,16 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         forwardDir.y = 0;
         rightDir.y = 0;
 
-        moveVector = forwardDir * playerInput.forward;
-        moveVector += rightDir * playerInput.strafe;
+        inputVector = forwardDir * playerInput.forward;
+        inputVector += rightDir * playerInput.strafe;
 
-        if (moveVector.magnitude > 1)
+        if (inputVector.magnitude > 1)
         {
-            moveVector.Normalize();
+            inputVector.Normalize();
         }
 
         targetSpeed = 0;
-        if (moveVector.magnitude > 0)
+        if (inputVector.magnitude > 0)
         {
             targetSpeed = isSprinting ? maxRunSpeed : maxWalkSpeed;
         }
@@ -199,12 +208,22 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
             transform.forward = Vector3.Lerp(transform.forward, targetForward, turnSpeed * Time.fixedDeltaTime);
         }*/
 
-        _characterController.Move(moveVector * curSpeed);
+        return inputVector * curSpeed;
     }
 
-    void AddJumpForceAsNeeded(PlayerInputController.PlayerInput playerInput)
+    Vector3 AddJumpForceAsNeeded(PlayerInputController.PlayerInput playerInput)
     {
-        // TODO: Implement jumping
+        if (Time.time - lastJumpTime < jumpForceDuration)
+        {
+            return (Vector3.up * jumpForce * BoltNetwork.FrameDeltaTime);
+        }
+        
+        if (_characterController.isGrounded && playerInput.jump)
+        {
+            lastJumpTime = Time.time;
+        }
+        
+        return Vector3.zero;
     }
 
     bool IsSprinting(PlayerInputController.PlayerInput playerInput)
