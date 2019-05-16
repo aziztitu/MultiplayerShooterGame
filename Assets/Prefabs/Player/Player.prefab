@@ -123,6 +123,7 @@ MonoBehaviour:
     forward: 0
     strafe: 0
     sprint: 0
+    jump: 0
     fire: 0
     aim: 0
 --- !u!114 &6871347776190722444
@@ -142,7 +143,8 @@ MonoBehaviour:
   acceleration: 2
   deceleration: 2
   gravityForce: -9.81
-  jumpForce: 40
+  jumpForce: 30
+  jumpForceDuration: 0.5
 --- !u!114 &3809013527577335709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -571,6 +573,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6871347776190722442}
     m_Modifications:
+    - target: {fileID: 2292453030812038003, guid: c7b6864cf9a2b4b4a9eb5a9dab95335e,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerHUD
+      objectReference: {fileID: 0}
     - target: {fileID: 7927190241353527, guid: c7b6864cf9a2b4b4a9eb5a9dab95335e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -614,11 +621,6 @@ PrefabInstance:
     - target: {fileID: 7927190241353527, guid: c7b6864cf9a2b4b4a9eb5a9dab95335e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2292453030812038003, guid: c7b6864cf9a2b4b4a9eb5a9dab95335e,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerHUD
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7b6864cf9a2b4b4a9eb5a9dab95335e, type: 3}

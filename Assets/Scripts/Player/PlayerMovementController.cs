@@ -9,7 +9,9 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     [Header("Movement Properties")] public float maxWalkSpeed = 0.1f;
     public float maxRunSpeed = 0.2f;
     public float acceleration = 2f;
+
     public float deceleration = 2f;
+
 //    public float turnSpeed = 3f;
     public float gravityForce = -9.81f;
     public float jumpForce = 40f;
@@ -48,7 +50,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     {
         if (LevelManager.Instance.interactingWithUI)
             return;
-        
+
         if (entity.IsOwner)
         {
             PlayerInputController.PlayerInput playerInput = _playerModel.playerInputController.GetPlayerInput();
@@ -70,7 +72,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
         {
             return (Vector3.up * gravityForce * BoltNetwork.FrameDeltaTime);
         }
-        
+
         return Vector3.zero;
     }
 
@@ -215,14 +217,16 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     {
         if (Time.time - lastJumpTime < jumpForceDuration)
         {
-            return (Vector3.up * jumpForce * BoltNetwork.FrameDeltaTime);
+            return (Vector3.up *
+                    (jumpForce - HelperUtilities.Remap(Time.time - lastJumpTime, 0, jumpForceDuration, 0, jumpForce)) *
+                    BoltNetwork.FrameDeltaTime);
         }
-        
+
         if (_characterController.isGrounded && playerInput.jump)
         {
             lastJumpTime = Time.time;
         }
-        
+
         return Vector3.zero;
     }
 

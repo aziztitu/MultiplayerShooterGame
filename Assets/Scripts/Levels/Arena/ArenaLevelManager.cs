@@ -19,13 +19,27 @@ public class ArenaLevelManager : LevelManager
     public string EndGameCreditsSceneName = "EndCredits";
 
     public List<Transform> SpawnPoints;
+    
+    private Randomizer<Transform> _spawnPointsRandomizer;
 
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
 
     private new void Awake()
     {
         base.Awake();
+        _spawnPointsRandomizer = new Randomizer<Transform>(ArenaLevelManager.Instance.SpawnPoints);
         arenaMenu.ShowHide(false);
+
+        SetupPlayerHooks();
+        OnLocalPlayerModelChanged += SetupPlayerHooks;
+    }
+
+    private void SetupPlayerHooks()
+    {
+        if (LocalPlayerModel)
+        {
+            LocalPlayerModel.health.OnDeath.AddListener(() => { arenaMenu.ShowHide(true); });
+        }
     }
 
     private void Update()
@@ -71,6 +85,21 @@ public class ArenaLevelManager : LevelManager
     public void GoToLobby(float delay)
     {
         StartCoroutine(GoToLobbyAfterSecs(delay));
+    }
+
+    public void RespawnLocalPlayer()
+    {
+        if (LocalPlayerModel != null)
+        {
+            BoltNetwork.Destroy(LocalPlayerModel.gameObject);
+        }
+        
+        Transform spawnPoint = _spawnPointsRandomizer.GetRandomItem();
+        if (spawnPoint != null)
+        {
+            ArenaCallbacks.SpawnPlayer(spawnPoint.transform.position, spawnPoint.transform.rotation);
+            CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState.FirstPerson);
+        }
     }
 
     IEnumerator GoToLobbyAfterSecs(float delay)

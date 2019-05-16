@@ -4,14 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public abstract class LevelManager: SingletonMonoBehaviour<LevelManager>
+public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
 {
-    public PlayerModel LocalPlayerModel;
-
     public bool interactingWithUI = false;
 
+    public event Action OnLocalPlayerModelChanged;
     public event Action<bool> OnGameOver;
     public bool GameOver { get; protected set; }
+
+    [SerializeField] private PlayerModel _localPlayerModel;
+    
+    public PlayerModel LocalPlayerModel
+    {
+        get { return _localPlayerModel; }
+        set
+        {
+            _localPlayerModel = value;
+            OnLocalPlayerModelChanged?.Invoke();
+        }
+    }
 
     new void Awake()
     {
@@ -27,7 +38,6 @@ public abstract class LevelManager: SingletonMonoBehaviour<LevelManager>
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     public void Restart()

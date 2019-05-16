@@ -19,7 +19,16 @@ public class FirstPersonCamera : StatefulCinemachineCamera
 
     protected override void OnActivated()
     {
-        VirtualCamera.Follow = LevelManager.Instance.LocalPlayerModel.firstPersonCamTransform;
+        if (LevelManager.Instance.LocalPlayerModel)
+        {
+            VirtualCamera.Follow = LevelManager.Instance.LocalPlayerModel.firstPersonCamTransform;
+        }
+
+        LevelManager.Instance.OnLocalPlayerModelChanged += () =>
+        {
+            VirtualCamera.Follow = LevelManager.Instance.LocalPlayerModel.firstPersonCamTransform;
+        };
+
         HelperUtilities.UpdateCursorLock(true);
     }
 

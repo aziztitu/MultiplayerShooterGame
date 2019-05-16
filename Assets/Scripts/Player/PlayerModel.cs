@@ -36,16 +36,24 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
 
         health.OnDeath.AddListener((() =>
         {
-            BoltNetwork.Destroy(gameObject);
+            if (entity.IsOwner)
+            {
+                BoltNetwork.Destroy(gameObject);
 
-            Transform prevCameraTransform = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera
-                .VirtualCamera.transform;
-            CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
-                .FreeFly);
-            /*CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.position =
-                prevCameraTransform.position;
-            CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.rotation =
-                prevCameraTransform.rotation;*/
+                Transform prevCameraTransform = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera
+                    .VirtualCamera.transform;
+                CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+                    .FreeFly);
+                /*CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.position =
+                    prevCameraTransform.position;
+                CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.rotation =
+                    prevCameraTransform.rotation;*/
+                
+                if (LevelManager.Instance != null)
+                {
+                    LevelManager.Instance.LocalPlayerModel = null;
+                }
+            }
         }));
     }
 

@@ -16,6 +16,12 @@ public class ArenaMenu : MonoBehaviour
     {
         ArenaLevelManager.Instance.GoToLobby(0);
     }
+    
+    public void Respawn()
+    {
+        ArenaLevelManager.Instance.RespawnLocalPlayer();
+        ShowHide(false);
+    }
 
     private void OnEnable()
     {
