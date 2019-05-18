@@ -45,7 +45,6 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     {
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (LevelManager.Instance.interactingWithUI)

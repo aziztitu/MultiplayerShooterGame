@@ -15,9 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Menus/Match Joining Menu.unity
     guid: c7689eb483364574cb4f05b6d067801f
   - enabled: 1
-    path: Assets/Scenes/Test/Azee/SampleScene.unity
-    guid: 92b03cc47a2ed204c83da68cea37530d
-  - enabled: 1
     path: Assets/Scenes/Test/Azee/ArenaTestScene.unity
     guid: 425988496cccbe347ae132b2711a49ea
   - enabled: 1
@@ -26,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Arenas/Arena_PolyTown.unity
     guid: a67d8e9d0c7466e47a73815fe356d50a
+  - enabled: 1
+    path: Assets/Scenes/Test/Azee/SampleScene.unity
+    guid: 92b03cc47a2ed204c83da68cea37530d
+  - enabled: 1
+    path: Assets/Scenes/Test/Azee/FlightTest.unity
+    guid: de6d0ffb287b7eb41b5c04540d6e288f
   m_configObjects: {}

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
 {
     public Transform thirdPersonCamTarget;
-    public Transform firstPersonCamTransform;
+    public Transform firstPersonCamFollow;
+
+    [Header("During Test Scenes Only")] [SerializeField] [CanBeNull]
+    private FlightModel _flightModelInControl;
 
     #region Accessors/Mutators
 
@@ -19,10 +23,15 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
     public FirstPersonCamera firstPersonCamera { get; private set; }
     public ThirdPersonPlayerCamera thirdPersonPlayerCamera { get; private set; }
 
+    [CanBeNull]
+    public FlightModel flightModelInControl
+    {
+        get { return _flightModelInControl; }
+        set { _flightModelInControl = value; }
+    }
+
     #endregion
 
-    private PlayerInputController _playerInputController;
-    private PlayerMovementController _playerMovementController;
     private Animator _animator;
 
     void Awake()
@@ -48,7 +57,7 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
                     prevCameraTransform.position;
                 CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.rotation =
                     prevCameraTransform.rotation;*/
-                
+
                 if (LevelManager.Instance != null)
                 {
                     LevelManager.Instance.LocalPlayerModel = null;

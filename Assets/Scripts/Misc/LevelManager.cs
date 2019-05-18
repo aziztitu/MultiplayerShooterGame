@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 
 public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
 {
-    public bool interactingWithUI = false;
+    [ReadOnly] public bool interactingWithUI = false;
 
     public event Action OnLocalPlayerModelChanged;
     public event Action<bool> OnGameOver;
     public bool GameOver { get; protected set; }
 
     [SerializeField] private PlayerModel _localPlayerModel;
-    
+
     public PlayerModel LocalPlayerModel
     {
         get { return _localPlayerModel; }
@@ -23,6 +23,24 @@ public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
             OnLocalPlayerModelChanged?.Invoke();
         }
     }
+
+    public Transform thirdPersonCameraTarget
+    {
+        get
+        {
+            if (_localPlayerModel != null)
+            {
+                return _localPlayerModel.flightModelInControl != null
+                    ? _localPlayerModel.flightModelInControl.thirdPersonCamTarget
+                    : _localPlayerModel.thirdPersonCamTarget;
+            }
+
+            return null;
+        }
+    }
+
+    public Transform firstPersonCameraFollow =>
+        _localPlayerModel != null ? _localPlayerModel.firstPersonCamFollow : null;
 
     new void Awake()
     {

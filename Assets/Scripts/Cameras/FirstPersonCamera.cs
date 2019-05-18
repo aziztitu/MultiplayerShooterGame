@@ -21,12 +21,12 @@ public class FirstPersonCamera : StatefulCinemachineCamera
     {
         if (LevelManager.Instance.LocalPlayerModel)
         {
-            VirtualCamera.Follow = LevelManager.Instance.LocalPlayerModel.firstPersonCamTransform;
+            VirtualCamera.Follow = LevelManager.Instance.firstPersonCameraFollow;
         }
 
         LevelManager.Instance.OnLocalPlayerModelChanged += () =>
         {
-            VirtualCamera.Follow = LevelManager.Instance.LocalPlayerModel.firstPersonCamTransform;
+            VirtualCamera.Follow = LevelManager.Instance.firstPersonCameraFollow;
         };
 
         HelperUtilities.UpdateCursorLock(true);

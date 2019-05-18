@@ -101,8 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12d0368550023c2429b9c3dd89c1f524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thirdPersonCamTarget: {fileID: 6871347776968962062}
-  firstPersonCamTransform: {fileID: 7806659984908517934}
+  thirdPersonCamTarget: {fileID: 6871347777580522229}
+  firstPersonCamFollow: {fileID: 7806659984908517934}
+  _flightModelInControl: {fileID: 0}
 --- !u!114 &6871347776190722445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneGuid: 
   _serializerGuid: 4cc7c984-142c-4c08-b463-6a01e340a7ba
-  _prefabId: 1
+  _prefabId: 2
   _updateRate: 1
   _autoFreezeProxyFrames: 0
   _clientPredicted: 1

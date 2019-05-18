@@ -27,6 +27,7 @@ public class ThirdPersonPlayerCamera : StatefulCinemachineCamera
 
     protected override void OnActivated()
     {
+        target = LevelManager.Instance.thirdPersonCameraTarget;
         HelperUtilities.UpdateCursorLock(true);
     }
 
@@ -39,8 +40,6 @@ public class ThirdPersonPlayerCamera : StatefulCinemachineCamera
     new void Start()
     {
         base.Start();
-        
-        target = LevelManager.Instance.LocalPlayerModel.thirdPersonCamTarget;
     }
 
     // Update is called once per frame
