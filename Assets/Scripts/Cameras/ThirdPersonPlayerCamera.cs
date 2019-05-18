@@ -48,8 +48,8 @@ public class ThirdPersonPlayerCamera : StatefulCinemachineCamera
         if (!target)
             return;
         
-        UpdatePosition();
-        UpdateRotation();
+//        UpdatePosition();
+//        UpdateRotation();
     }
 
     void UpdatePosition()
