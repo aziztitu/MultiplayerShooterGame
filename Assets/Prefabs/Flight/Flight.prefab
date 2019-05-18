@@ -169,6 +169,7 @@ MonoBehaviour:
   deceleration: 5
   alignToCameraSpeed: 10
   enableVerticalMovement: 0
+  engineTrailChangeSpeed: 5
   curSpeed: 0
 --- !u!114 &4403351485716837635
 MonoBehaviour:

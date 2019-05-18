@@ -105,7 +105,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     void UpdateEngineTrails()
     {
         Vector3 newLocalScale = _flightModel.flightAvatar.trailObject.transform.localScale;
-        newLocalScale.z = Mathf.Lerp(newLocalScale.z, HelperUtilities.Remap01(curSpeed, 0, maxSpeed),
+        newLocalScale.z = Mathf.Lerp(newLocalScale.z, HelperUtilities.Remap(curSpeed, 0, maxSpeed, 0.4f, 1),
             Time.deltaTime * engineTrailChangeSpeed);
 
         _flightModel.flightAvatar.trailObject.transform.localScale = newLocalScale;
