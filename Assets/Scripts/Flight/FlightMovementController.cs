@@ -11,6 +11,8 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     public float alignToCameraSpeed = 10;
     public bool enableVerticalMovement = false;
 
+    public float engineTrailChangeSpeed = 5;
+
     [SerializeField] [ReadOnly] private float curSpeed = 0;
     private FlightModel _flightModel;
     private Rigidbody _rigidbody;
@@ -29,12 +31,13 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     // Update is called once per frame
     void Update()
     {
+        UpdateEngineTrails();
     }
 
     void FixedUpdate()
     {
         ResetVelocity();
-        
+
         if (LevelManager.Instance.interactingWithUI)
             return;
 
@@ -97,5 +100,14 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     {
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
+    }
+
+    void UpdateEngineTrails()
+    {
+        Vector3 newLocalScale = _flightModel.flightAvatar.trailObject.transform.localScale;
+        newLocalScale.z = Mathf.Lerp(newLocalScale.z, HelperUtilities.Remap01(curSpeed, 0, maxSpeed),
+            Time.deltaTime * engineTrailChangeSpeed);
+
+        _flightModel.flightAvatar.trailObject.transform.localScale = newLocalScale;
     }
 }
