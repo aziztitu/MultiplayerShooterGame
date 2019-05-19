@@ -6,12 +6,10 @@ public class RangeRaycastWeapon : RangeWeapon
     public override Type InfoAssetType => typeof(RangeRaycastWeaponInfoAsset);
     public new RangeRaycastWeaponInfoAsset weaponInfoAsset => GetWeaponInfoAsset<RangeRaycastWeaponInfoAsset>();
 
-    protected override void OnShotFired()
+    protected override void OnShotFired(out int bulletsUsed)
     {
-        Transform src = aimSource ? aimSource : muzzle;
-        
         RaycastHit hitInfo;
-        if (Physics.Raycast(src.position, src.forward, out hitInfo, weaponInfoAsset.maxRange))
+        if (Physics.Raycast(aimSource.position, aimSource.forward, out hitInfo, weaponInfoAsset.maxRange))
         {
             if (weaponInfoAsset.hitEffectPrefab)
             {
@@ -21,6 +19,8 @@ public class RangeRaycastWeapon : RangeWeapon
 
             OnHitObject(hitInfo);
         }
+        
+        bulletsUsed = 1;
     }
 
     protected void OnHitObject(RaycastHit raycastHit)

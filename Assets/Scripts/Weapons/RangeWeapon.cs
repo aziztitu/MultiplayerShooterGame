@@ -5,17 +5,26 @@ using UnityEngine;
 public abstract class RangeWeapon : Weapon
 {
     public Transform aimSource;
-    public Transform muzzle;
+
+    public Transform[] muzzles;
+    public Transform muzzlePivot;
 
 //    [Button("Shoot", "Shoot")] public bool btn_Shoot;
+
+    [SerializeField] private int _roundsLeft = 5;
+    private float nextFireableTime = 0;
 
     public override Type InfoAssetType => typeof(RangeWeaponInfoAsset);
     public new RangeWeaponInfoAsset weaponInfoAsset => GetWeaponInfoAsset<RangeWeaponInfoAsset>();
 
-    [SerializeField] public int roundsLeft { get; protected set; } = 5;
-    public int bulletsInCurrentRound { get; protected set; } = 0;
+    public int roundsLeft
+    {
+        get { return _roundsLeft; }
 
-    private float nextFireableTime = 0;
+        protected set { _roundsLeft = value; }
+    }
+
+    public int bulletsInCurrentRound { get; protected set; } = 0;
 
     protected new void Update()
     {
@@ -32,9 +41,11 @@ public abstract class RangeWeapon : Weapon
         {
             if (bulletsInCurrentRound > 0)
             {
-                bulletsInCurrentRound--;
                 nextFireableTime = Time.time + (1 / weaponInfoAsset.fireRate);
-                OnShotFired();
+
+                int bulletsUsed;
+                OnShotFired(out bulletsUsed);
+                bulletsInCurrentRound -= bulletsUsed;
                 return true;
             }
 
@@ -53,5 +64,5 @@ public abstract class RangeWeapon : Weapon
         }
     }
 
-    protected abstract void OnShotFired();
+    protected abstract void OnShotFired(out int bulletsUsed);
 }

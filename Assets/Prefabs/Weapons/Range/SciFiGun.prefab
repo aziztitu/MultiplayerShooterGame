@@ -1504,8 +1504,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponInfoAsset: {fileID: 11400000, guid: 6a4f281cfe040ee42888485a4877ec26, type: 2}
   aimSource: {fileID: 0}
-  muzzle: {fileID: 7642922771069458251}
-  roundsLeft: 5
+  muzzles:
+  - {fileID: 7642922771069458251}
+  muzzlePivot: {fileID: 0}
 --- !u!114 &1435764895513294616
 MonoBehaviour:
   m_ObjectHideFlags: 0

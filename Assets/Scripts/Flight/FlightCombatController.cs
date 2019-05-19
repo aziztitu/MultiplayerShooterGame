@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlightCombatController : MonoBehaviour
+public class FlightCombatController : Bolt.EntityBehaviour<IFlightState>
 {
+    private FlightModel _flightModel;
+    
+    private void Awake()
+    {
+        _flightModel = GetComponent<FlightModel>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +21,25 @@ public class FlightCombatController : MonoBehaviour
     void Update()
     {
         
+    }
+    
+    public override void SimulateOwner()
+    {
+        base.SimulateOwner();
+        
+        if (LevelManager.Instance.interactingWithUI)
+            return;
+        
+        FlightInputController.FlightInput flightInput = _flightModel.flightInputController.GetFlightInput();
+        UpdateShooting(flightInput);
+    }
+
+
+    void UpdateShooting(FlightInputController.FlightInput flightInput)
+    {
+        if (flightInput.fire)
+        {
+            _flightModel.flightAvatar.flightWeapon.Shoot();
+        }
     }
 }
