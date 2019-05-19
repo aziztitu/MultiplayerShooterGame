@@ -145,6 +145,7 @@ MonoBehaviour:
   - {fileID: 4332079423743228290}
   - {fileID: 2925774021804736031}
   muzzlePivot: {fileID: 0}
+  _roundsLeft: 30
   projectilePrefab: {fileID: 3659822019201525090, guid: 034a71559a9c07f46b547f3efa753f75,
     type: 3}
 --- !u!114 &1271526118029271522

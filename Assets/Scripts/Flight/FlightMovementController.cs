@@ -10,6 +10,8 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     public float acceleration = 5;
     public float deceleration = 5;
     public float alignToCameraSpeed = 10;
+    public float maxStrafeRoll = 45;
+    public float strafeRollSpeed = 5;
     public bool enableVerticalMovement = false;
 
     [Header("Trail Settings")] public float engineTrailChangeSpeed = 5;
@@ -105,6 +107,17 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
         }
 
         transform.position += inputVector * curSpeed;
+
+        if (Math.Abs(flightInput.forward) < 0.001)
+        {
+            float roll = -flightInput.strafeHorizontal * maxStrafeRoll;
+
+            Quaternion avatarLocalRot = _flightModel.flightAvatar.transform.localRotation;
+            avatarLocalRot = Quaternion.Euler(avatarLocalRot.x, avatarLocalRot.y, roll);
+            _flightModel.flightAvatar.transform.localRotation =
+                Quaternion.Slerp(_flightModel.flightAvatar.transform.localRotation, avatarLocalRot,
+                    Time.deltaTime * strafeRollSpeed);
+        }
     }
 
     void ResetVelocity()
