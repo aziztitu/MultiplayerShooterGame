@@ -17,8 +17,9 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
     public struct FlightInput
     {
         [Header("Movement")] public float forward;
-        public float strafe;
-        public bool sprint;
+        public float strafeHorizontal;
+        public float strafeVertical;
+        public bool boost;
 
         [Header("Combat")] public bool fire;
         public bool aim;
@@ -48,9 +49,10 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
 
     void UpdateMoveInput()
     {
-        flightInput.strafe = Input.GetAxis("Horizontal");
+        flightInput.strafeHorizontal = Input.GetAxis("Horizontal");
         flightInput.forward = Input.GetAxis("Vertical");
-        flightInput.sprint = Input.GetButton("Sprint");
+        flightInput.strafeVertical = Input.GetAxis("StrafeVertical");
+        flightInput.boost = Input.GetButton("Sprint");
         flightInput.fire = Input.GetButton("Fire");
         flightInput.aim = Input.GetButton("Aim");
     }

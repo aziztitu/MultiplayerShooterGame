@@ -5,15 +5,22 @@ using UnityEngine;
 
 public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
 {
-    public float maxSpeed = 20;
+    public float maxRegularSpeed = 1;
+    public float maxBoostSpeed = 3;
     public float acceleration = 5;
     public float deceleration = 5;
     public float alignToCameraSpeed = 10;
     public bool enableVerticalMovement = false;
 
-    public float engineTrailChangeSpeed = 5;
+    [Header("Trail Settings")] public float engineTrailChangeSpeed = 5;
+    public float restEngineTrailLength = 0.4f;
+    public float regularEngineTrailLength = 1f;
+    public float boostEngineTrailLength = 1.4f;
 
-    [SerializeField] [ReadOnly] private float curSpeed = 0;
+    [Header("Debug Info")] [SerializeField] [ReadOnly]
+    private float curSpeed = 0;
+
+    private float targetSpeed = 0;
     private FlightModel _flightModel;
     private Rigidbody _rigidbody;
 
@@ -31,7 +38,8 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     // Update is called once per frame
     void Update()
     {
-        UpdateEngineTrails();
+        FlightInputController.FlightInput flightInput = _flightModel.flightInputController.GetFlightInput();
+        UpdateEngineTrails(flightInput);
     }
 
     void FixedUpdate()
@@ -53,14 +61,16 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
 
     void Move(FlightInputController.FlightInput flightInput)
     {
-        Vector3 inputVector = new Vector3(flightInput.strafe, 0, flightInput.forward);
+        Vector3 inputVector = new Vector3(flightInput.strafeHorizontal, 0, flightInput.forward);
 
         Camera outputCamera = CinemachineCameraManager.Instance.OutputCamera;
         transform.forward = Vector3.Lerp(transform.forward, outputCamera.transform.forward,
             BoltNetwork.FrameDeltaTime * alignToCameraSpeed);
+        transform.LookAt(transform.position + (transform.forward * 5), outputCamera.transform.up);
 
         Vector3 forwardDir = transform.forward;
         Vector3 rightDir = transform.right;
+        Vector3 upDir = transform.up;
 
         if (!enableVerticalMovement)
         {
@@ -69,17 +79,18 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
         }
 
         inputVector = forwardDir * flightInput.forward;
-        inputVector += rightDir * flightInput.strafe;
+        inputVector += rightDir * flightInput.strafeHorizontal;
+        inputVector += upDir * flightInput.strafeVertical;
 
         if (inputVector.magnitude > 1)
         {
             inputVector.Normalize();
         }
 
-        float targetSpeed = 0;
+        targetSpeed = 0;
         if (inputVector.magnitude > 0)
         {
-            targetSpeed = maxSpeed;
+            targetSpeed = flightInput.boost ? maxBoostSpeed : maxRegularSpeed;
         }
 
         if (targetSpeed > curSpeed)
@@ -102,10 +113,13 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
         _rigidbody.angularVelocity = Vector3.zero;
     }
 
-    void UpdateEngineTrails()
+    void UpdateEngineTrails(FlightInputController.FlightInput flightInput)
     {
         Vector3 newLocalScale = _flightModel.flightAvatar.trailObject.transform.localScale;
-        newLocalScale.z = Mathf.Lerp(newLocalScale.z, HelperUtilities.Remap(curSpeed, 0, maxSpeed, 0.4f, 1),
+        newLocalScale.z = Mathf.Lerp(newLocalScale.z,
+            HelperUtilities.Remap(curSpeed, 0, flightInput.boost ? maxBoostSpeed : maxRegularSpeed,
+                restEngineTrailLength,
+                flightInput.boost ? boostEngineTrailLength : regularEngineTrailLength),
             Time.deltaTime * engineTrailChangeSpeed);
 
         _flightModel.flightAvatar.trailObject.transform.localScale = newLocalScale;

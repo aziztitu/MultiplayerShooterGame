@@ -255,14 +255,14 @@ MonoBehaviour:
   m_ScreenX: 0.5
   m_ScreenY: 0.83
   m_CameraDistance: 11
-  m_DeadZoneWidth: 0.55
-  m_DeadZoneHeight: 0
+  m_DeadZoneWidth: 0.3
+  m_DeadZoneHeight: 0.1
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.85
-  m_SoftZoneHeight: 0.475
+  m_SoftZoneWidth: 0.6
+  m_SoftZoneHeight: 0.217
   m_BiasX: 0
-  m_BiasY: -0.29999998
+  m_BiasY: 0.16999958
   m_CenterOnActivate: 1
   m_GroupFramingMode: 2
   m_AdjustmentMode: 2
@@ -289,14 +289,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_VerticalAxis:
     Value: 0
-    m_MaxSpeed: 300
+    m_MaxSpeed: 200
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Look Y
     m_InputAxisValue: 0
     m_InvertInput: 1
-    m_MinValue: -70
-    m_MaxValue: 70
+    m_MinValue: -90
+    m_MaxValue: 90
     m_Wrap: 0
     m_Recentering:
       m_enabled: 0
@@ -312,7 +312,7 @@ MonoBehaviour:
     m_LegacyVelocityFilterStrength: -1
   m_HorizontalAxis:
     Value: 0
-    m_MaxSpeed: 300
+    m_MaxSpeed: 200
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Look X

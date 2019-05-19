@@ -148,8 +148,9 @@ MonoBehaviour:
     invertLookY: 0
   flightInput:
     forward: 0
-    strafe: 0
-    sprint: 0
+    strafeHorizontal: 0
+    strafeVertical: 0
+    boost: 0
     fire: 0
     aim: 0
 --- !u!114 &9090722975429971787
@@ -164,12 +165,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f23d5e89d6978dc4ea148a1e59ffc3db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 1
+  maxRegularSpeed: 1
+  maxBoostSpeed: 1
   acceleration: 5
   deceleration: 5
   alignToCameraSpeed: 10
   enableVerticalMovement: 0
   engineTrailChangeSpeed: 5
+  restEngineTrailLength: 0.35
+  regularEngineTrailLength: 1
+  boostEngineTrailLength: 1.4
   curSpeed: 0
 --- !u!114 &4403351485716837635
 MonoBehaviour:
