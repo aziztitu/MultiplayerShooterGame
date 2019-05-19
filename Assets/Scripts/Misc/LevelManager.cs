@@ -38,6 +38,21 @@ public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
             return null;
         }
     }
+    
+    public Transform thirdPersonCameraFollow
+    {
+        get
+        {
+            if (_localPlayerModel != null)
+            {
+                return _localPlayerModel.flightModelInControl != null
+                    ? _localPlayerModel.flightModelInControl.thirdPersonCamFollow
+                    : _localPlayerModel.firstPersonCamFollow;
+            }
+
+            return null;
+        }
+    }
 
     public Transform firstPersonCameraFollow =>
         _localPlayerModel != null ? _localPlayerModel.firstPersonCamFollow : null;

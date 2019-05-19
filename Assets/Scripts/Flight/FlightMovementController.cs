@@ -40,6 +40,11 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     // Update is called once per frame
     void Update()
     {
+        if (_flightModel.controllingPlayer == null)
+        {
+            
+        }
+        
         FlightInputController.FlightInput flightInput = _flightModel.flightInputController.GetFlightInput();
         UpdateEngineTrails(flightInput);
     }
@@ -47,6 +52,11 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     void FixedUpdate()
     {
         ResetVelocity();
+        
+        if (_flightModel.controllingPlayer == null)
+        {
+            return;
+        }
 
         if (LevelManager.Instance.interactingWithUI)
             return;
@@ -54,8 +64,6 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
         if (entity.IsOwner)
         {
             FlightInputController.FlightInput flightInput = _flightModel.flightInputController.GetFlightInput();
-//            isSprinting = IsSprinting(flightInput);
-
             Move(flightInput);
         }
     }
@@ -108,16 +116,12 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
 
         transform.position += inputVector * curSpeed;
 
-        if (Math.Abs(flightInput.forward) < 0.001)
-        {
-            float roll = -flightInput.strafeHorizontal * maxStrafeRoll;
-
-            Quaternion avatarLocalRot = _flightModel.flightAvatar.transform.localRotation;
-            avatarLocalRot = Quaternion.Euler(avatarLocalRot.x, avatarLocalRot.y, roll);
-            _flightModel.flightAvatar.transform.localRotation =
-                Quaternion.Slerp(_flightModel.flightAvatar.transform.localRotation, avatarLocalRot,
-                    Time.deltaTime * strafeRollSpeed);
-        }
+        float roll = -flightInput.strafeHorizontal * maxStrafeRoll;
+        Quaternion avatarLocalRot = _flightModel.flightAvatar.transform.localRotation;
+        avatarLocalRot = Quaternion.Euler(avatarLocalRot.x, avatarLocalRot.y, roll);
+        _flightModel.flightAvatar.transform.localRotation =
+            Quaternion.Slerp(_flightModel.flightAvatar.transform.localRotation, avatarLocalRot,
+                Time.deltaTime * strafeRollSpeed);
     }
 
     void ResetVelocity()

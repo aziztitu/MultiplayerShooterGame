@@ -27,6 +27,13 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
 
     [SerializeField] private FlightInputSettings flightInputSettings = new FlightInputSettings();
     [ReadOnly] [SerializeField] private FlightInput flightInput = new FlightInput();
+    
+    private FlightModel _flightModel;
+
+    private void Awake()
+    {
+        _flightModel = GetComponent<FlightModel>();
+    }
 
     void Update()
     {
@@ -34,6 +41,12 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
 
     public override void SimulateOwner()
     {
+        if (_flightModel.controllingPlayer == null)
+        {
+            ResetMoveInput();
+            return;
+        }
+        
         UpdateFlightInput();
     }
 
@@ -45,6 +58,11 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
     void UpdateFlightInput()
     {
         UpdateMoveInput();
+    }
+
+    void ResetMoveInput()
+    {
+        flightInput = new FlightInput();
     }
 
     void UpdateMoveInput()

@@ -27,7 +27,8 @@ public class ThirdPersonPlayerCamera : StatefulCinemachineCamera
 
     protected override void OnActivated()
     {
-        target = LevelManager.Instance.thirdPersonCameraTarget;
+        VirtualCamera.Follow = LevelManager.Instance.thirdPersonCameraFollow;
+        VirtualCamera.LookAt = LevelManager.Instance.thirdPersonCameraTarget;
         HelperUtilities.UpdateCursorLock(true);
     }
 

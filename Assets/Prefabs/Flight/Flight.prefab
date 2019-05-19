@@ -77,6 +77,8 @@ GameObject:
   - component: {fileID: 9090722975429971787}
   - component: {fileID: 4403351485716837635}
   - component: {fileID: 3655734173773632563}
+  - component: {fileID: 5481610379292948100}
+  - component: {fileID: 375742402485574673}
   m_Layer: 0
   m_Name: Flight
   m_TagString: Untagged
@@ -130,6 +132,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thirdPersonCamTarget: {fileID: 6779462379195904791}
+  thirdPersonCamFollow: {fileID: 1500523548021054115}
+  _controllingPlayer: {fileID: 0}
 --- !u!114 &5699479753302620825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,15 +170,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRegularSpeed: 1
-  maxBoostSpeed: 1
+  maxBoostSpeed: 3
   acceleration: 5
   deceleration: 5
   alignToCameraSpeed: 10
-  enableVerticalMovement: 0
+  maxStrafeRoll: 30
+  strafeRollSpeed: 10
+  enableVerticalMovement: 1
   engineTrailChangeSpeed: 5
   restEngineTrailLength: 0.35
-  regularEngineTrailLength: 1
-  boostEngineTrailLength: 1.4
+  regularEngineTrailLength: 0.62
+  boostEngineTrailLength: 1.2
   curSpeed: 0
 --- !u!114 &4403351485716837635
 MonoBehaviour:
@@ -217,6 +223,42 @@ MonoBehaviour:
   _entityBehaviourQueryOption: 0
   _entityPriorityCalculatorQueryOption: 0
   _entityReplicationFilterQueryOption: 0
+--- !u!114 &5481610379292948100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500523548026516763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d834e5a9751b4af79ab3e4ce1834fa50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onShotEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Shootable+ShootableEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+--- !u!114 &375742402485574673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500523548026516763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59573dfa9cff4a0f87f783a02c99946b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  healthProperty: Health
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1001 &708147573056589713
 PrefabInstance:
   m_ObjectHideFlags: 0
