@@ -28,6 +28,12 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
 
     [SerializeField] private PlayerInputSettings _playerInputSettings = new PlayerInputSettings();
     [ReadOnly] [SerializeField] private PlayerInput _playerInput = new PlayerInput();
+    private PlayerModel _playerModel;
+
+    private void Awake()
+    {
+        _playerModel = GetComponent<PlayerModel>();
+    }
 
     void Update()
     {
@@ -45,16 +51,16 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
 
     void UpdatePlayerInput()
     {
-        UpdateMoveInput();
-    }
-
-    void UpdateMoveInput()
-    {
         _playerInput.strafe = Input.GetAxis("Horizontal");
         _playerInput.forward = Input.GetAxis("Vertical");
         _playerInput.sprint = Input.GetButton("Sprint");
         _playerInput.jump = Input.GetButton("Jump");
         _playerInput.fire = Input.GetButton("Fire");
         _playerInput.aim = Input.GetButton("Aim");
+    }
+
+    void ResetPlayerInput()
+    {
+        _playerInput = new PlayerInput();
     }
 }

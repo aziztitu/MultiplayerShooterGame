@@ -46,7 +46,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     }
 
     void FixedUpdate()
-    {
+    {        
         if (LevelManager.Instance.interactingWithUI)
             return;
 
@@ -63,6 +63,11 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     public override void SimulateOwner()
     {
         base.SimulateOwner();
+        
+        if (_playerModel.flightModelInControl != null)
+        {
+            return;
+        }
     }
 
     Vector3 ApplyGravityIfNeeded()

@@ -40,13 +40,13 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     // Update is called once per frame
     void Update()
     {
-        if (_flightModel.controllingPlayer == null)
-        {
-            
-        }
-        
         FlightInputController.FlightInput flightInput = _flightModel.flightInputController.GetFlightInput();
         UpdateEngineTrails(flightInput);
+        
+        if (_flightModel.controllingPlayer == null)
+        {
+            return;
+        }
     }
 
     void FixedUpdate()

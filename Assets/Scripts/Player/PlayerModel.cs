@@ -9,6 +9,7 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
 {
     public Transform thirdPersonCamTarget;
     public Transform firstPersonCamFollow;
+    public GameObject playerAvatar;
 
     [Header("During Test Scenes Only")] [SerializeField] [CanBeNull]
     private FlightModel _flightModelInControl;
@@ -22,25 +23,29 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
     public Health health { get; private set; }
     public FirstPersonCamera firstPersonCamera { get; private set; }
     public ThirdPersonPlayerCamera thirdPersonPlayerCamera { get; private set; }
+    public InteractionController interactionController { get; private set; }
 
     [CanBeNull]
     public FlightModel flightModelInControl
     {
         get { return _flightModelInControl; }
-        set { _flightModelInControl = value; }
+        private set { _flightModelInControl = value; }
     }
 
     #endregion
 
+    private CharacterController _characterController;
     private Animator _animator;
 
     void Awake()
     {
+        _characterController = GetComponentInChildren<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
         playerMovementController = GetComponent<PlayerMovementController>();
         playerInputController = GetComponent<PlayerInputController>();
         playerCombatController = GetComponent<PlayerCombatController>();
         playerHUDController = GetComponentInChildren<PlayerHUDController>();
+        interactionController = GetComponentInChildren<InteractionController>();
         health = GetComponent<Health>();
 
         health.OnDeath.AddListener((() =>
@@ -70,11 +75,6 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
     void Start()
     {
         FindRequiredCameras();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     public override void Attached()
@@ -111,5 +111,35 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
                 firstPersonCamera = fpc;
             }
         }
+    }
+
+    public void OnTakenFlightControl(FlightModel flightModel)
+    {
+        flightModelInControl = flightModel;
+        gameObject.SetActive(false);
+//        playerHUDController.Show(false);
+        
+        CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+            .ThirdPerson);
+    }
+
+    public void OnFlightControlRevoked()
+    {
+        if (flightModelInControl == null)
+        {
+            return;
+        }
+
+        _characterController.enabled = false;
+        transform.position = flightModelInControl.transform.position + (flightModelInControl.transform.up * 3f);
+        _characterController.enabled = true;
+
+
+        flightModelInControl = null;
+        gameObject.SetActive(true);
+//        playerHUDController.Show(true);
+        
+        CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+            .FirstPerson);
     }
 }

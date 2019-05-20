@@ -3,10 +3,10 @@ using Bolt;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
+public class Health<T> : Bolt.EntityEventListener<T> where T : IHealthState
 {
     public float health = 100f;
-    public string healthProperty = "Health";
+//    public string healthProperty = "Health";
     public UnityEvent OnDeath;
 
     public float maxhealth { get; private set; } = 100f;
@@ -19,21 +19,22 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
 
         if (entity.IsOwner)
         {
-            state.SetDynamic(healthProperty, health);    
+            state.Health = health;
         }
         
-        state.AddCallback(healthProperty, () =>
+        state.AddCallback("Health", () =>
         {
-            float stateHealth = (float) state.GetDynamic(healthProperty);
-            if (stateHealth < health)
+            if (state.Health < health)
             {
                 // Damage Taken
-            } else if (stateHealth > health)
+            } else if (state.Health > health)
             {
                 // Healed
             }
             
-            health = stateHealth;
+            Debug.Log("Health Callback: New Health --> " + state.Health);
+            
+            health = state.Health;
         });
     }
 
@@ -71,15 +72,16 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
     {
         if (entity.IsOwner)
         {
-            float stateHealth = (float) state.GetDynamic(healthProperty);
-            stateHealth = Mathf.Clamp(stateHealth + deltaHealth, 0, maxhealth);
-            state.SetDynamic(healthProperty, stateHealth);
+            Debug.Log("Original health property: " + state.Health);
+            Debug.Log("Max health: " + maxhealth);
+            state.Health = Mathf.Clamp(state.Health + deltaHealth, 0, maxhealth);
+            Debug.Log("Setting health property: " + state.Health);
         }
         else
         {
-            UpdatePlayerHealthEvent e = UpdatePlayerHealthEvent.Create(entity.Source, ReliabilityModes.ReliableOrdered);
+            UpdateEntityHealthEvent e = UpdateEntityHealthEvent.Create(entity.Source, ReliabilityModes.ReliableOrdered);
             e.DeltaHealth = deltaHealth;
-            e.TargetPlayerEntity = entity;
+            e.Target = entity;
             e.Send();
         }
     }
@@ -98,7 +100,7 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
         health = Mathf.Clamp(health, 0, maxhealth);
     }
 
-    public override void OnEvent(UpdatePlayerHealthEvent evnt)
+    public override void OnEvent(UpdateEntityHealthEvent evnt)
     {
         base.OnEvent(evnt);
         if (entity.IsOwner)
@@ -108,6 +110,6 @@ public class Health<T> : Bolt.EntityEventListener<IState> where T : IState
     }
 }
 
-public class Health : Health<IState>
+public class Health : Health<IHealthState>
 {
 }

@@ -25,8 +25,6 @@ public class RangeRaycastWeapon : RangeWeapon
 
     protected void OnHitObject(RaycastHit raycastHit)
     {
-        Debug.Log("Hit Object: " + raycastHit.transform.gameObject.name);
-
         Shootable shootable = raycastHit.collider.GetComponent<Shootable>();
         if (!shootable)
         {
@@ -38,6 +36,7 @@ public class RangeRaycastWeapon : RangeWeapon
         
         if (shootable)
         {
+            Debug.Log("Hit Object: " + raycastHit.transform.gameObject.name);
             shootable.OnShot(weaponInfoAsset.damage, raycastHit.point);
         }
     }

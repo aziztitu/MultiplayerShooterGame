@@ -23,6 +23,8 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
 
         [Header("Combat")] public bool fire;
         public bool aim;
+
+        [Header("Others")] public bool exitFlight;
     }
 
     [SerializeField] private FlightInputSettings flightInputSettings = new FlightInputSettings();
@@ -43,7 +45,7 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
     {
         if (_flightModel.controllingPlayer == null)
         {
-            ResetMoveInput();
+            ResetFlightInput();
             return;
         }
         
@@ -57,21 +59,19 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
 
     void UpdateFlightInput()
     {
-        UpdateMoveInput();
-    }
-
-    void ResetMoveInput()
-    {
-        flightInput = new FlightInput();
-    }
-
-    void UpdateMoveInput()
-    {
         flightInput.strafeHorizontal = Input.GetAxis("Horizontal");
         flightInput.forward = Input.GetAxis("Vertical");
         flightInput.strafeVertical = Input.GetAxis("StrafeVertical");
         flightInput.boost = Input.GetButton("Sprint");
+        
         flightInput.fire = Input.GetButton("Fire");
         flightInput.aim = Input.GetButton("Aim");
+        
+        flightInput.exitFlight = Input.GetButtonDown("Exit Flight");
+    }
+
+    void ResetFlightInput()
+    {
+        flightInput = new FlightInput();
     }
 }

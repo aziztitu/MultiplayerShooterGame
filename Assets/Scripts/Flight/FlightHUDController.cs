@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerHUDController : MonoBehaviour
+public class FlightHUDController : MonoBehaviour
 {
     [Serializable]
     public class HealthUtils
@@ -23,11 +23,11 @@ public class PlayerHUDController : MonoBehaviour
     public HealthUtils healthUtils;
     public WeaponUtils weaponUtils;
 
-    private PlayerModel playerModel;
+    private FlightModel flightModel;
 
     private void Awake()
     {
-        playerModel = GetComponentInParent<PlayerModel>();
+        flightModel = GetComponentInParent<FlightModel>();
     }
 
     private void Update()
@@ -38,14 +38,14 @@ public class PlayerHUDController : MonoBehaviour
 
     void UpdateHealthStats()
     {
-        float health = playerModel.health.health;
+        float health = flightModel.health.health;
         healthUtils.healthText.text = Mathf.RoundToInt(health).ToString();
-        healthUtils.healthSliderImage.fillAmount = HelperUtilities.Remap01(health, 0, playerModel.health.maxhealth);
+        healthUtils.healthSliderImage.fillAmount = HelperUtilities.Remap01(health, 0, flightModel.health.maxhealth);
     }
 
     void UpdateWeaponStats()
     {
-        RangeWeapon rangeWeapon = playerModel.playerCombatController.rangeWeapon;
+        RangeWeapon rangeWeapon = flightModel.flightAvatar.flightWeapon;
         weaponUtils.roundCountText.text =
             "/" + (rangeWeapon.roundsLeft < 10 ? "0" : "") + rangeWeapon.roundsLeft;
         weaponUtils.bulletCountText.text = rangeWeapon.bulletsInCurrentRound.ToString();

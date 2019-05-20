@@ -38,7 +38,7 @@ public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
             return null;
         }
     }
-    
+
     public Transform thirdPersonCameraFollow
     {
         get
@@ -56,6 +56,21 @@ public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
 
     public Transform firstPersonCameraFollow =>
         _localPlayerModel != null ? _localPlayerModel.firstPersonCamFollow : null;
+
+    public InteractionController currentInteractionController
+    {
+        get
+        {
+            if (_localPlayerModel != null)
+            {
+                return _localPlayerModel.flightModelInControl != null
+                    ? _localPlayerModel.flightModelInControl.interactionController
+                    : _localPlayerModel.interactionController;
+            }
+
+            return null;
+        }
+    }
 
     new void Awake()
     {
