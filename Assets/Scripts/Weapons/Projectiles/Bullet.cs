@@ -11,15 +11,19 @@ public class Bullet : Projectile
     public override Type InfoAssetType => typeof(BulletInfoAsset);
     public new BulletInfoAsset projectileInfoAsset => GetProjectileInfoAsset<BulletInfoAsset>();
 
+    private Rigidbody _rigidbody;
+
     private void Awake()
     {
         speed = projectileInfoAsset.defaultSpeed;
         launchPos = transform.position;
+
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
     {
-        transform.position += velocity * Time.fixedDeltaTime;
+//        transform.position += velocity * Time.fixedDeltaTime;
 
         if (Vector3.Distance(transform.position, launchPos) > range)
         {
@@ -37,6 +41,8 @@ public class Bullet : Projectile
         transform.LookAt(transform.position + (direction * 5));
         launchPos = transform.position;
         velocity = direction * speed;
+
+        _rigidbody.velocity = velocity;
     }
 
     private void OnTriggerEnter(Collider other)
