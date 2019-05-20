@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   defaultRange: 100
-  defaultSpeed: 200
+  defaultSpeed: 300
   hitEffectPrefab: {fileID: 1570927096764274, guid: 643639841fb531e4ba8097fed4eb9ac7,
     type: 3}
   hitEffectDuration: 0.5
