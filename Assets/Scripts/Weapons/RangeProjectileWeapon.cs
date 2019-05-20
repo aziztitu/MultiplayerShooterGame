@@ -19,20 +19,25 @@ public class RangeProjectileWeapon : RangeWeapon
                 return;
             }
 
-            ShootFromMuzzle(muzzle);
-            bulletsUsed++;
+            if (ShootFromMuzzle(muzzle))
+            {
+                bulletsUsed++;
+            }
         }
     }
 
-    void ShootFromMuzzle(Transform muzzle)
+    bool ShootFromMuzzle(Transform muzzle)
     {
         Vector3 shootDir;
         if (aimSource)
         {
             Vector3 hitTargetPos;
 
+            int layerMask = -5;
+            layerMask &= ~(1 << LayerMask.NameToLayer("LocalPlayer"));
+
             RaycastHit hitInfo;
-            if (Physics.Raycast(aimSource.position, aimSource.forward, out hitInfo, weaponInfoAsset.maxRange))
+            if (Physics.Raycast(aimSource.position, aimSource.forward, out hitInfo, weaponInfoAsset.maxRange, layerMask))
             {
                 hitTargetPos = hitInfo.point;
             }
@@ -54,11 +59,21 @@ public class RangeProjectileWeapon : RangeWeapon
         }
 
         shootDir.Normalize();
+        
+
+        if (Vector3.Angle(muzzle.forward, shootDir) >= 90f)
+        {
+            return false;
+        }
+        
+//        Debug.Log("Angle: " + Vector3.Angle(muzzle.forward, shootDir));
 
         GameObject projectileObj =
             Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
         Projectile projectile = projectileObj.GetComponent<Projectile>();
         projectile.SetBulletRange(weaponInfoAsset.maxRange);
         projectile.Launch(shootDir);
+
+        return true;
     }
 }

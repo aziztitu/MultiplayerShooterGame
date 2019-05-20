@@ -20,7 +20,7 @@ public class Bullet : Projectile
     private void FixedUpdate()
     {
         transform.position += velocity * Time.fixedDeltaTime;
-        
+
         if (Vector3.Distance(transform.position, launchPos) > range)
         {
             Destroy(this.gameObject);
@@ -39,7 +39,36 @@ public class Bullet : Projectile
         velocity = direction * speed;
     }
 
-    protected void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Bullet") ||
+            (other.attachedRigidbody && other.attachedRigidbody.gameObject.CompareTag("Bullet")))
+        {
+            return;
+        }
+
+        if (other.attachedRigidbody && other.attachedRigidbody.gameObject.layer == LayerMask.NameToLayer("LocalPlayer"))
+        {
+            return;
+        }
+
+        Debug.Log("Hit Object: " + other.transform.gameObject.name);
+
+        Vector3 hitPos = other.ClosestPoint(transform.position);
+
+        GameObject hitEffect = Instantiate(projectileInfoAsset.hitEffectPrefab, hitPos, Quaternion.identity);
+        Destroy(hitEffect, projectileInfoAsset.hitEffectDuration);
+
+        Shootable shootable;
+        if (IsShootable(other, out shootable))
+        {
+            shootable.OnShot(projectileInfoAsset.damage, hitPos);
+        }
+
+        Destroy(gameObject);
+    }
+
+    /*protected void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Bullet"))
         {
@@ -64,5 +93,5 @@ public class Bullet : Projectile
         }
 
         Destroy(gameObject);
-    }
+    }*/
 }

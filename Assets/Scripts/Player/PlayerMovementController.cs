@@ -46,7 +46,12 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     }
 
     void FixedUpdate()
-    {        
+    {
+        if (_playerModel.flightModelInControl != null)
+        {
+            return;
+        }
+        
         if (LevelManager.Instance.interactingWithUI)
             return;
 

@@ -34,6 +34,11 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
     {
         base.SimulateOwner();
         
+        if (_playerModel.flightModelInControl != null)
+        {
+            return;
+        }
+        
         if (LevelManager.Instance.interactingWithUI)
             return;
         

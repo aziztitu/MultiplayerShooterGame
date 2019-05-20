@@ -95,6 +95,7 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
         if (playerModel)
         {
             controllingPlayer = playerModel;
+            HelperUtilities.SetLayerRecursively(gameObject, LayerMask.NameToLayer("LocalPlayer"));
             playerModel.OnTakenFlightControl(this);
             flightHudController.Show();
         }
@@ -108,6 +109,7 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
         }
 
         flightHudController.Show(false);
+        HelperUtilities.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Default"));
         controllingPlayer.OnFlightControlRevoked();
         controllingPlayer = null;
     }

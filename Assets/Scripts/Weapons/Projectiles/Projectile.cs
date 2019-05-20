@@ -34,6 +34,25 @@ public abstract class Projectile : MonoBehaviour
     {
         range = bulletRange;
     }
+    
+    protected bool IsShootable(Collider other, out Shootable shootable)
+    {
+        shootable = other.GetComponent<Shootable>();
+        if (!shootable)
+        {
+            if (other.attachedRigidbody)
+            {
+                shootable = other.attachedRigidbody.GetComponent<Shootable>();
+            }
+        }
+
+        if (shootable)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     protected bool IsShootable(Collision other, out Shootable shootable)
     {

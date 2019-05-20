@@ -41,6 +41,12 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
 
     public override void SimulateOwner()
     {
+        if (_playerModel.flightModelInControl != null)
+        {
+            ResetPlayerInput();
+            return;
+        }
+        
         UpdatePlayerInput();
     }
 

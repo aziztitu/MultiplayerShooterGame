@@ -78,4 +78,12 @@ public class HelperUtilities {
             items[0] = t;
         }
     }
+    
+    public static void SetLayerRecursively(GameObject go, int layerNumber)
+    {
+        foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
+        {
+            trans.gameObject.layer = layerNumber;
+        }
+    }
 }

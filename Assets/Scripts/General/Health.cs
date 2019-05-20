@@ -32,8 +32,6 @@ public class Health<T> : Bolt.EntityEventListener<T> where T : IHealthState
                 // Healed
             }
             
-            Debug.Log("Health Callback: New Health --> " + state.Health);
-            
             health = state.Health;
         });
     }
@@ -72,10 +70,7 @@ public class Health<T> : Bolt.EntityEventListener<T> where T : IHealthState
     {
         if (entity.IsOwner)
         {
-            Debug.Log("Original health property: " + state.Health);
-            Debug.Log("Max health: " + maxhealth);
             state.Health = Mathf.Clamp(state.Health + deltaHealth, 0, maxhealth);
-            Debug.Log("Setting health property: " + state.Health);
         }
         else
         {
