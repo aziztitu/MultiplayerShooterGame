@@ -24,6 +24,8 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
 
         [Header("Combat")] public bool fire;
         public bool aim;
+        
+        [Header("Others")] public bool enterFlight;
     }
 
     [SerializeField] private PlayerInputSettings _playerInputSettings = new PlayerInputSettings();
@@ -41,7 +43,7 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
 
     public override void SimulateOwner()
     {
-        if (_playerModel.flightModelInControl != null)
+        if (!_playerModel.controllable)
         {
             ResetPlayerInput();
             return;
@@ -61,8 +63,11 @@ public class PlayerInputController : Bolt.EntityBehaviour<IPlayerState>
         _playerInput.forward = Input.GetAxis("Vertical");
         _playerInput.sprint = Input.GetButton("Sprint");
         _playerInput.jump = Input.GetButton("Jump");
+        
         _playerInput.fire = Input.GetButton("Fire");
         _playerInput.aim = Input.GetButton("Aim");
+        
+        _playerInput.enterFlight = Input.GetButtonDown("EnterExit Flight");
     }
 
     void ResetPlayerInput()

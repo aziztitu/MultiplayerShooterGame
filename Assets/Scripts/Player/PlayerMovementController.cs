@@ -47,7 +47,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
 
     void FixedUpdate()
     {
-        if (_playerModel.flightModelInControl != null)
+        if (!_playerModel.controllable)
         {
             return;
         }
@@ -69,7 +69,7 @@ public class PlayerMovementController : Bolt.EntityBehaviour<IPlayerState>
     {
         base.SimulateOwner();
         
-        if (_playerModel.flightModelInControl != null)
+        if (!_playerModel.controllable)
         {
             return;
         }

@@ -31,9 +31,21 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
         get { return _flightModelInControl; }
         private set { _flightModelInControl = value; }
     }
+    
+    public bool controllable
+    {
+        get
+        {
+            bool cameraIsStable = CinemachineCameraManager.Instance &&
+                                  !CinemachineCameraManager.Instance.CinemachineBrain.IsBlending;
+
+            return flightModelInControl == null && cameraIsStable;
+        }
+    }
 
     #endregion
 
+    private FlightModel privateFlightModel;
     private CharacterController _characterController;
     private Animator _animator;
 
@@ -83,12 +95,38 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
         SetupState();
 
         playerHUDController.gameObject.SetActive(entity.IsOwner);
+        
+        if (entity.IsOwner)
+        {
+            var privateFlightGameObject = BoltNetwork.Instantiate(BoltPrefabs.Flight);
+            privateFlightModel = privateFlightGameObject.GetComponent<FlightModel>();
+            privateFlightModel.Show(false);
+        }
     }
 
     public void SetupState()
     {
         state.SetTransforms(state.PlayerTransform, transform);
         state.SetAnimator(_animator);
+    }
+
+    public override void SimulateOwner()
+    {
+        base.SimulateOwner();
+
+        if (!controllable)
+        {
+            return;
+        }
+
+        PlayerInputController.PlayerInput playerInput = playerInputController.GetPlayerInput();
+        if (playerInput.enterFlight && privateFlightModel)
+        {
+            privateFlightModel.transform.position = transform.position;
+            privateFlightModel.transform.rotation = transform.rotation;
+            privateFlightModel.RequestControl(this);
+            privateFlightModel.Show(true);
+        }
     }
 
     private void FindRequiredCameras()
@@ -131,9 +169,19 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
         }
 
         _characterController.enabled = false;
-        transform.position = flightModelInControl.transform.position + (flightModelInControl.transform.up * 3f);
+        transform.position = flightModelInControl.transform.position;
+
+        Vector3 forwardDir = flightModelInControl.transform.forward;
+        forwardDir.y = 0;
+        
+        transform.LookAt(transform.position + (forwardDir * 5), Vector3.up);
+        
         _characterController.enabled = true;
 
+        if (flightModelInControl == privateFlightModel)
+        {
+            flightModelInControl.Show(false);
+        }
 
         flightModelInControl = null;
         gameObject.SetActive(true);

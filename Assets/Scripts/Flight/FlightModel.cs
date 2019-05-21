@@ -28,6 +28,17 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
         set { _controllingPlayer = value; }
     }
 
+    public bool controllable
+    {
+        get
+        {
+            bool cameraIsStable = CinemachineCameraManager.Instance &&
+                                  !CinemachineCameraManager.Instance.CinemachineBrain.IsBlending;
+
+            return _controllingPlayer != null && cameraIsStable;
+        }
+    }
+
     private void Awake()
     {
         flightInputController = GetComponent<FlightInputController>();
@@ -37,14 +48,15 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
         flightHudController = GetComponentInChildren<FlightHUDController>(false);
         interactionController = GetComponentInChildren<InteractionController>();
         health = GetComponent<Health>();
-        
+
         health.OnDeath.AddListener(() =>
         {
             if (controllingPlayer != null)
             {
-                controllingPlayer.health.TakeDamage(controllingPlayer.health.maxhealth, controllingPlayer.transform.position);
+                controllingPlayer.health.TakeDamage(controllingPlayer.health.maxhealth,
+                    controllingPlayer.transform.position);
             }
-            
+
             Destroy(gameObject);
         });
     }
@@ -60,7 +72,7 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
     {
         base.SimulateOwner();
 
-        if (controllingPlayer == null)
+        if (!controllable)
         {
             return;
         }
@@ -86,19 +98,24 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
 
     public void RequestControl(InteractionController otherInteractionController)
     {
+        PlayerModel playerModel = otherInteractionController.GetComponent<PlayerModel>();
+        if (playerModel)
+        {
+            RequestControl(playerModel);
+        }
+    }
+
+    public void RequestControl(PlayerModel playerModel)
+    {
         if (controllingPlayer != null)
         {
             return;
         }
 
-        PlayerModel playerModel = otherInteractionController.GetComponent<PlayerModel>();
-        if (playerModel)
-        {
-            controllingPlayer = playerModel;
-            HelperUtilities.SetLayerRecursively(gameObject, LayerMask.NameToLayer("LocalPlayer"));
-            playerModel.OnTakenFlightControl(this);
-            flightHudController.Show();
-        }
+        controllingPlayer = playerModel;
+        HelperUtilities.SetLayerRecursively(gameObject, LayerMask.NameToLayer("LocalPlayer"));
+        playerModel.OnTakenFlightControl(this);
+        flightHudController.Show();
     }
 
     private void RevokePlayerControl()
@@ -112,5 +129,10 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
         HelperUtilities.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Default"));
         controllingPlayer.OnFlightControlRevoked();
         controllingPlayer = null;
+    }
+
+    public void Show(bool show)
+    {
+        gameObject.SetActive(show);
     }
 }

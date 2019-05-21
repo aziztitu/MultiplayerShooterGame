@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Bullet : Projectile
+public class Bullet : Projectile<IBulletState>
 {
     private float speed;
     private Vector3 velocity = Vector3.zero;
@@ -21,13 +21,13 @@ public class Bullet : Projectile
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void FixedUpdate()
+    public override void SimulateOwner()
     {
-//        transform.position += velocity * Time.fixedDeltaTime;
-
+        base.SimulateOwner();
+        
         if (Vector3.Distance(transform.position, launchPos) > range)
         {
-            Destroy(this.gameObject);
+            BoltNetwork.Destroy(this.gameObject);
         }
     }
 
@@ -47,6 +47,11 @@ public class Bullet : Projectile
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!entity.IsOwner)
+        {
+            return;
+        }
+        
         if (other.gameObject.CompareTag("Bullet") ||
             (other.attachedRigidbody && other.attachedRigidbody.gameObject.CompareTag("Bullet")))
         {
@@ -71,7 +76,7 @@ public class Bullet : Projectile
             shootable.OnShot(projectileInfoAsset.damage, hitPos);
         }
 
-        Destroy(gameObject);
+        BoltNetwork.Destroy(gameObject);
     }
 
     /*protected void OnCollisionEnter(Collision other)

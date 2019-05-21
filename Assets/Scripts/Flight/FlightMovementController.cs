@@ -44,7 +44,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
         FlightInputController.FlightInput flightInput = _flightModel.flightInputController.GetFlightInput();
         UpdateEngineTrails(flightInput);
 
-        if (_flightModel.controllingPlayer == null)
+        if (!_flightModel.controllable)
         {
             return;
         }
@@ -54,7 +54,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     {
         ResetVelocity();
 
-        if (_flightModel.controllingPlayer == null)
+        if (!_flightModel.controllable)
         {
             return;
         }

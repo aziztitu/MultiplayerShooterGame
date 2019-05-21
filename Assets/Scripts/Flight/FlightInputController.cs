@@ -43,7 +43,7 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
 
     public override void SimulateOwner()
     {
-        if (_flightModel.controllingPlayer == null)
+        if (!_flightModel.controllable)
         {
             ResetFlightInput();
             return;
@@ -67,7 +67,7 @@ public class FlightInputController: Bolt.EntityBehaviour<IFlightState>
         flightInput.fire = Input.GetButton("Fire");
         flightInput.aim = Input.GetButton("Aim");
         
-        flightInput.exitFlight = Input.GetButtonDown("Exit Flight");
+        flightInput.exitFlight = Input.GetButtonDown("EnterExit Flight");
     }
 
     void ResetFlightInput()

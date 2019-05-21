@@ -27,7 +27,7 @@ public class FlightCombatController : Bolt.EntityBehaviour<IFlightState>
     {
         base.SimulateOwner();
         
-        if (_flightModel.controllingPlayer == null)
+        if (!_flightModel.controllable)
         {
             return;
         }

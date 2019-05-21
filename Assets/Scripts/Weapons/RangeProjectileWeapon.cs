@@ -68,9 +68,9 @@ public class RangeProjectileWeapon : RangeWeapon
         
 //        Debug.Log("Angle: " + Vector3.Angle(muzzle.forward, shootDir));
 
-        GameObject projectileObj =
-            Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
-        Projectile projectile = projectileObj.GetComponent<Projectile>();
+        BoltEntity projectileEntity =
+            BoltNetwork.Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
+        Projectile projectile = projectileEntity.GetComponent<Projectile>();
         projectile.SetBulletRange(weaponInfoAsset.maxRange);
         projectile.Launch(shootDir);
 

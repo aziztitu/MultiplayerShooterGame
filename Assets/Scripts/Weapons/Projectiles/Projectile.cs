@@ -1,16 +1,16 @@
 using System;
 using UnityEngine;
 
-public abstract class Projectile : MonoBehaviour
+public abstract class Projectile<T> : Bolt.EntityBehaviour<T> where T : IProjectileState
 {
     protected float range;
 
     public ProjectileInfoAsset projectileInfoAsset;
     public abstract Type InfoAssetType { get; }
 
-    public T GetProjectileInfoAsset<T>() where T : ProjectileInfoAsset
+    public U GetProjectileInfoAsset<U>() where U : ProjectileInfoAsset
     {
-        return projectileInfoAsset as T;
+        return projectileInfoAsset as U;
     }
 
     private void Awake()
@@ -29,12 +29,27 @@ public abstract class Projectile : MonoBehaviour
             }
         }
     }
-    
+
+    public override void Attached()
+    {
+        base.Attached();
+
+        if (entity.IsOwner)
+        {
+            SetupState();
+        }
+    }
+
+    void SetupState()
+    {
+        state.SetTransforms(state.ProjectileTransform, transform);
+    }
+
     public void SetBulletRange(float bulletRange)
     {
         range = bulletRange;
     }
-    
+
     protected bool IsShootable(Collider other, out Shootable shootable)
     {
         shootable = other.GetComponent<Shootable>();
@@ -74,4 +89,8 @@ public abstract class Projectile : MonoBehaviour
     }
 
     public abstract void Launch(Vector3 direction);
+}
+
+public abstract class Projectile : Projectile<IProjectileState>
+{
 }

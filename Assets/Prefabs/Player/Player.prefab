@@ -129,6 +129,7 @@ MonoBehaviour:
     jump: 0
     fire: 0
     aim: 0
+    enterFlight: 0
 --- !u!114 &6871347776190722444
 MonoBehaviour:
   m_ObjectHideFlags: 0
