@@ -110,6 +110,11 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
     {
         state.SetTransforms(state.PlayerTransform, transform);
         state.SetAnimator(_animator);
+
+        if (entity.IsOwner)
+        {
+            state.ArenaPlayerId = ArenaDataManager.Instance.localPlayerId;
+        }
     }
 
     public override void SimulateOwner()
