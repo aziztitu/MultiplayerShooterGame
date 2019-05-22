@@ -4,7 +4,7 @@ using Bolt;
 using JetBrains.Annotations;
 using UnityEngine;
 
-[BoltGlobalBehaviour(BoltNetworkModes.Server, @"Arena.*")]
+[BoltGlobalBehaviour(BoltNetworkModes.Server, @"^Arena.*")]
 public class ArenaServerCallbacks : Bolt.GlobalEventListener
 {
     private Randomizer<Transform> _spawnPointsRandomizer;

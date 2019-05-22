@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class ArenaLevelManager : LevelManager
 {
+    public ArenaSettingsAsset arenaSettingsAsset;
+    
     public GameObject CinemachineCameraRigPrefab;
 
     public ArenaMenu arenaMenu;
@@ -47,6 +49,17 @@ public class ArenaLevelManager : LevelManager
         if (Input.GetButtonDown("Pause"))
         {
             arenaMenu.ToggleShowHide();
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (arenaSettingsAsset)
+        {
+            if (arenaSettingsAsset.teams.Length > 2)
+            {
+                Debug.LogWarning("Only a maximum of two teams is supported now");
+            }
         }
     }
 

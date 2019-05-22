@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test/Azee/FlightTest.unity
     guid: de6d0ffb287b7eb41b5c04540d6e288f
+  - enabled: 1
+    path: Assets/Scenes/Menus/Lobby Arena.unity
+    guid: 876aea8e568b3e8408e956f4d5075d05
   m_configObjects: {}

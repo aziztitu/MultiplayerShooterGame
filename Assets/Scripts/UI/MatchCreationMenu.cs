@@ -7,10 +7,11 @@ using UnityEngine.UI;
 
 public class MatchCreationMenu : Bolt.GlobalEventListener
 {
+    public string arenaLobbySceneName = "Arena Lobby";
     public string sceneToGoBack = "Multiplayer Menu";
 
-    private string selectedScene = "";
-    
+    private ArenaSettingsAsset selectedArenaSettingsAsset = null;
+
     private void Awake()
     {
         var arenaSelectionUis = GetComponentsInChildren<ArenaSelectionUI>();
@@ -18,7 +19,7 @@ public class MatchCreationMenu : Bolt.GlobalEventListener
         {
             arenaSelectionUi.OnArenaSelected += LoadArenaAsServer;
         }
-        
+
         HelperUtilities.UpdateCursorLock(false);
         if (BoltNetwork.IsRunning)
         {
@@ -30,16 +31,30 @@ public class MatchCreationMenu : Bolt.GlobalEventListener
     {
         if (BoltNetwork.IsServer)
         {
-            string matchName = Guid.NewGuid().ToString();
-
-            BoltNetwork.SetServerInfo(matchName, null);
-            BoltNetwork.LoadScene(selectedScene);
+            InitializeArenaLobby();
         }
     }
 
-    void LoadArenaAsServer(string arenaSceneName)
+    void InitializeArenaLobby()
     {
-        selectedScene = arenaSceneName;
+        string matchName = Guid.NewGuid().ToString();
+
+        BoltNetwork.SetServerInfo(matchName, null);
+
+        if (ArenaDataManager.Instance != null)
+        {
+            DestroyImmediate(ArenaDataManager.Instance.gameObject);
+        }
+
+        var arenaDataManager = BoltNetwork.Instantiate(BoltPrefabs.Arena_Data_Manager).GetComponent<ArenaDataManager>();
+        arenaDataManager.Initialize(selectedArenaSettingsAsset);
+
+        BoltNetwork.LoadScene(arenaLobbySceneName);
+    }
+
+    void LoadArenaAsServer(ArenaSettingsAsset arenaSettingsAsset)
+    {
+        selectedArenaSettingsAsset = arenaSettingsAsset;
         BoltLauncher.StartServer();
     }
 

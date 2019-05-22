@@ -93,4 +93,12 @@ public class HelperUtilities {
         var entity = gameObject.GetComponent<BoltEntity>();
         return entity ? entity.PrefabId : default(PrefabId);
     }
+
+    public static void DestroyAllChildObjects(Transform transform)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Object.Destroy(transform.GetChild(i).gameObject);
+        }
+    }
 }

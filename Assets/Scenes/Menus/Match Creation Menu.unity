@@ -339,6 +339,12 @@ PrefabInstance:
       propertyPath: arenaLevelName
       value: ArenaTestScene
       objectReference: {fileID: 0}
+    - target: {fileID: 988507019654080877, guid: 4d9e467896d925b4798eb0a7ca005b64,
+        type: 3}
+      propertyPath: arenaSettingsAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 521b5d479cf5eca498e75e4a077a95e2,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d9e467896d925b4798eb0a7ca005b64, type: 3}
 --- !u!224 &608325061 stripped
@@ -849,6 +855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e271605dbb84656976d03263cd955d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arenaLobbySceneName: Lobby Arena
   sceneToGoBack: Multiplayer Menu
 --- !u!1 &1807099266
 GameObject:
@@ -1019,7 +1026,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 7823103166542294770}
   m_Direction: 0
   m_Value: 0.5
-  m_Size: 0.16462918
+  m_Size: 0.3202934
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1317,6 +1324,12 @@ PrefabInstance:
       propertyPath: arenaLevelName
       value: Arena_PolyTown
       objectReference: {fileID: 0}
+    - target: {fileID: 988507019654080877, guid: 4d9e467896d925b4798eb0a7ca005b64,
+        type: 3}
+      propertyPath: arenaSettingsAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: cc72cdc4cf7a28440be71eaa4b954fc4,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d9e467896d925b4798eb0a7ca005b64, type: 3}
 --- !u!224 &1750156646980116390 stripped
@@ -1860,6 +1873,12 @@ PrefabInstance:
       propertyPath: arenaLevelName
       value: Arena_SciFi
       objectReference: {fileID: 0}
+    - target: {fileID: 988507019654080877, guid: 4d9e467896d925b4798eb0a7ca005b64,
+        type: 3}
+      propertyPath: arenaSettingsAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 849a16dffd732a540a5476161ff8dd11,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d9e467896d925b4798eb0a7ca005b64, type: 3}
 --- !u!224 &5726933652590585901 stripped
@@ -1989,7 +2008,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5269257477674070645}
   m_Direction: 2
   m_Value: 0.5
-  m_Size: 0.91735536
+  m_Size: 0.93112946
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
