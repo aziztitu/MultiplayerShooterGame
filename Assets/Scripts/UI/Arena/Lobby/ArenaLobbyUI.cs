@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using BasicTools.ButtonInspector;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArenaLobbyUI : MonoBehaviour
 {
     public GameObject teamListContainer;
+    public GameObject serverTools;
     public GameObject arenaLobbyTeamUIPrefab;
 
     private List<ArenaLobbyTeamUI> teamUIList = new List<ArenaLobbyTeamUI>();
@@ -38,6 +40,8 @@ public class ArenaLobbyUI : MonoBehaviour
                 RefreshAllTeams();
             }
         });
+
+        serverTools.SetActive(BoltNetwork.IsServer);
     }
 
     void Reset()
