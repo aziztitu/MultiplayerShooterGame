@@ -16,4 +16,3 @@ MonoBehaviour:
   levelPlayerType: 1
   teams:
   - maxCapacity: 1
-  - maxCapacity: 1

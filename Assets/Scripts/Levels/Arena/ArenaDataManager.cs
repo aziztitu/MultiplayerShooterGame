@@ -29,6 +29,9 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
     public List<ArenaTeamInfo> arenaTeamInfos = new List<ArenaTeamInfo>();
     public List<ArenaPlayerInfo> unassignedPlayers = new List<ArenaPlayerInfo>();
+
+    public int connectedPlayersCount => BoltNetwork.Connections.Count() + 1;
+    public bool canAddPlayer => connectedPlayersCount < arenaSettingsAsset.arenaMaxCapacity;
     
     [Button("Refresh Team Infos", "RefreshTeamInfosFromState")]
     public bool refreshTeamInfos_Btn;

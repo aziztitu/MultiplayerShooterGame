@@ -44,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33f79cf4d0b54cec982597651cb37ada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arenaSettingsAsset: {fileID: 0}
+  arenaTeamInfos: []
+  unassignedPlayers: []
+  refreshTeamInfos_Btn: 0
 --- !u!114 &6409893758735490128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: -36112512, guid: 5b00bf8b25851d440940a40ec23344f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sceneGuid: 52d20814-a59b-49b5-abc3-88a204c70572
+  _sceneGuid: 
   _serializerGuid: e5de935c-7c37-431c-856b-934a75502d98
   _prefabId: 2
   _updateRate: 1

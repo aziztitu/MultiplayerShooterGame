@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BasicTools.ButtonInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ArenaLobbyUI : MonoBehaviour
@@ -9,6 +10,7 @@ public class ArenaLobbyUI : MonoBehaviour
     public GameObject teamListContainer;
     public GameObject serverTools;
     public GameObject arenaLobbyTeamUIPrefab;
+    public string sceneToGoBack = "Multiplayer Menu";
 
     private List<ArenaLobbyTeamUI> teamUIList = new List<ArenaLobbyTeamUI>();
     private bool initializedListeners = false;
@@ -82,6 +84,11 @@ public class ArenaLobbyUI : MonoBehaviour
         // TODO
     }
 
+    public void GoBack()
+    {
+        SceneManager.LoadScene(sceneToGoBack);
+    }
+    
     public void StartGame()
     {
         if (BoltNetwork.IsServer)
