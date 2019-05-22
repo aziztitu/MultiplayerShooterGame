@@ -11,16 +11,12 @@ public class ArenaLobbyTeamUI : MonoBehaviour
 
     private void Awake()
     {
-        ArenaDataManager.AddOnReadyListener(() =>
-        {
-            ArenaDataManager.Instance.OnTeamInfoChanged += (changedTeamId) =>
-            {
-                if (teamInfo != null && changedTeamId == teamInfo.teamId)
-                {
-                    Refresh();
-                }
-            };
-        });
+        ArenaDataManager.AddOnReadyListener(OnArenaDataManagerReady);
+    }
+
+    void OnArenaDataManagerReady()
+    {
+        ArenaDataManager.Instance.OnTeamInfoChanged += OnTeamInfoChanged;
     }
 
     public void SetTeamInfo(ArenaDataManager.ArenaTeamInfo newTeamInfo)
@@ -45,6 +41,21 @@ public class ArenaLobbyTeamUI : MonoBehaviour
                 playerInfoItemUi.SetPlayerInfo(playerInfo);
                 Debug.Log("Refreshing player: " + playerInfo.playerName);
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        ArenaDataManager.RemoveOnReadyListener(OnArenaDataManagerReady);
+        ArenaDataManager.Instance.OnTeamInfoChanged -= OnTeamInfoChanged; 
+    }
+
+    void OnTeamInfoChanged(int changedTeamId)
+    {
+        if (teamInfo != null && changedTeamId == teamInfo.teamId)
+        {
+            teamInfo = ArenaDataManager.Instance.arenaTeamInfos[changedTeamId];
+            Refresh();
         }
     }
 }

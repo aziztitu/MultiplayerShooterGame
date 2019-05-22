@@ -7,6 +7,9 @@ public class ArenaLobbyPlayerInfoItemUI : MonoBehaviour
     public Image icon;
     public TextMeshProUGUI text;
 
+    public Sprite serverPlayerSprite;
+    public Sprite normalPlayerSprite;
+
     private ArenaDataManager.ArenaPlayerInfo playerInfo;
 
     private void Awake()
@@ -20,7 +23,8 @@ public class ArenaLobbyPlayerInfoItemUI : MonoBehaviour
     }
 
     public void Refresh()
-    {   
+    {
         text.text = playerInfo.playerName;
+        icon.sprite = playerInfo.isServer ? serverPlayerSprite : normalPlayerSprite;
     }
 }

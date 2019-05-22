@@ -5,6 +5,8 @@ public class GameManager
 {
     public Account curAccount { get; private set; }
 
+    public bool isLoggedIn => curAccount != null;
+
     public static GameManager Instance => _instance ?? (_instance = new GameManager());
     private static GameManager _instance;
 
@@ -13,11 +15,11 @@ public class GameManager
         curAccount = null;
     }
 
-    public void Login(string name)
+    public void Login(string username)
     {
         curAccount = new Account()
         {
-            name = name
+            name = username
         };
     }
 }

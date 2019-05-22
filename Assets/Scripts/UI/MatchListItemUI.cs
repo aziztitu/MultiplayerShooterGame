@@ -1,3 +1,4 @@
+using Bolt.Utils;
 using TMPro;
 using UdpKit;
 using UnityEngine;
@@ -6,12 +7,11 @@ using UnityEngine.UI;
 public class MatchListItemUI : MonoBehaviour
 {
     public TextMeshProUGUI matchNameText;
-    
+
     private UdpSession session;
 
     private void Awake()
     {
-        
     }
 
     public void SetSessionData(UdpSession session)
@@ -19,12 +19,24 @@ public class MatchListItemUI : MonoBehaviour
         this.session = session;
 
         UdpEndPoint udpEndPoint = session.HasLan ? session.LanEndPoint : session.WanEndPoint;
-        
-        matchNameText.text = $"{udpEndPoint.Address}:{udpEndPoint.Port} [{session.Id}]";
+        var roomInfo = session.GetProtocolToken() as ArenaLobby.RoomInfo;
+
+        string ipAndPort = $"{udpEndPoint.Address}:{udpEndPoint.Port}";
+        if (roomInfo != null)
+        {
+            matchNameText.text = $"{roomInfo.serverPlayerName} [{ipAndPort}]";
+        }
+        else
+        {
+            matchNameText.text = $"{ipAndPort}";
+        }
     }
 
     public void JoinMatch()
     {
-        BoltNetwork.Connect(session);
+        BoltNetwork.Connect(session, new ArenaLobby.JoinInfo()
+        {
+            account = GameManager.Instance.curAccount
+        });
     }
 }

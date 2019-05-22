@@ -7,7 +7,7 @@ public class Randomizer<T>
 {
     public List<T> items = new List<T>();
 
-    private int nextClipIndex = 0;
+    private int nextItemIndex = 0;
     
     public Randomizer(List<T> items)
     {
@@ -25,7 +25,7 @@ public class Randomizer<T>
     {
         HelperUtilities.Rearrange(items);
 
-        nextClipIndex = 0;
+        nextItemIndex = 0;
     }
     
     public T GetRandomItem()
@@ -35,16 +35,16 @@ public class Randomizer<T>
             return default(T);
         }
 
-        if (nextClipIndex < 0)
+        if (nextItemIndex < 0)
         {
             Shuffle();
         }
 
-        if (nextClipIndex >= items.Count)
+        if (nextItemIndex >= items.Count)
         {
             Shuffle();
         }
 
-        return items[nextClipIndex++];
+        return items[nextItemIndex++];
     }
 }

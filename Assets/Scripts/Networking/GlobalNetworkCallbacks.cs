@@ -5,6 +5,16 @@ using UnityEngine;
 [BoltGlobalBehaviour]
 public class GlobalNetworkCallbacks : Bolt.GlobalEventListener
 {
+    public override void BoltStartBegin()
+    {
+        base.BoltStartBegin();
+        
+        BoltNetwork.RegisterTokenClass<Account>();
+        BoltNetwork.RegisterTokenClass<ArenaLobby.RoomInfo>();
+        BoltNetwork.RegisterTokenClass<ArenaLobby.JoinInfo>();
+        BoltNetwork.RegisterTokenClass<ArenaLobby.JoinResult>();
+    }
+
     public override void OnEvent(UpdateEntityHealthEvent evnt)
     {
         base.OnEvent(evnt);

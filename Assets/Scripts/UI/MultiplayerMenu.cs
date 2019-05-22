@@ -9,9 +9,15 @@ public class MultiplayerMenu : Bolt.GlobalEventListener
 {
     public string matchCreationScene = "Match Creation Menu";
     public string matchJoiningScene = "Match Joining Menu";
-    
+
     private void Awake()
     {
+        if (!GameManager.Instance.isLoggedIn)
+        {
+            SceneManager.LoadScene(AuthMenu.authMenuSceneName);
+            return;
+        }
+        
         HelperUtilities.UpdateCursorLock(false);
         if (BoltNetwork.IsRunning)
         {

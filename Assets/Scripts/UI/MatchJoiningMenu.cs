@@ -15,6 +15,12 @@ public class MatchJoiningMenu : Bolt.GlobalEventListener
 
     private void Awake()
     {
+        if (!GameManager.Instance.isLoggedIn)
+        {
+            SceneManager.LoadScene(AuthMenu.authMenuSceneName);
+            return;
+        }
+     
         HelperUtilities.UpdateCursorLock(false);
         if (BoltNetwork.IsRunning)
         {

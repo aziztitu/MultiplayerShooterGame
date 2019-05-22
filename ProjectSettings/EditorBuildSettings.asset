@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Menus/Auth Menu.unity
+    guid: 2e30f2c33ea86ba4dba93fed14de9bd7
+  - enabled: 1
     path: Assets/Scenes/Menus/Multiplayer Menu.unity
     guid: bae5b07d8f0738a49ab85f39630a4af3
   - enabled: 1
@@ -14,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menus/Match Joining Menu.unity
     guid: c7689eb483364574cb4f05b6d067801f
+  - enabled: 1
+    path: Assets/Scenes/Menus/Lobby Arena.unity
+    guid: 876aea8e568b3e8408e956f4d5075d05
   - enabled: 1
     path: Assets/Scenes/Test/Azee/ArenaTestScene.unity
     guid: 425988496cccbe347ae132b2711a49ea
@@ -29,7 +35,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test/Azee/FlightTest.unity
     guid: de6d0ffb287b7eb41b5c04540d6e288f
-  - enabled: 1
-    path: Assets/Scenes/Menus/Lobby Arena.unity
-    guid: 876aea8e568b3e8408e956f4d5075d05
   m_configObjects: {}

@@ -20,30 +20,20 @@ public class ArenaLobbyUI : MonoBehaviour
 
     private void Awake()
     {
-        ArenaDataManager.AddOnReadyListener(() =>
-        {
-            ArenaDataManager.Instance.OnTeamInfoChanged += (changedTeamInfo) =>
-            {
-                if (changedTeamInfo == ArenaDataManager.UnassignedTeamId)
-                {
-                    RefreshUnassigned();
-                }
-            };
-            
-            if (BoltNetwork.IsServer)
-            {
-                Reset();
-            }
-            else
-            {
-                ArenaDataManager.Instance.OnTeamInfosRefreshed += RefreshAllTeams;
-                ArenaDataManager.Instance.OnUnassignedPlayersRefreshed += RefreshUnassigned;
-                
-                RefreshAllTeams();
-            }
-        });
+        ArenaDataManager.AddOnReadyListener(OnArenaDataManagerReady);
 
         serverTools.SetActive(BoltNetwork.IsServer);
+    }
+
+    private void OnDestroy()
+    {
+        ArenaDataManager.RemoveOnReadyListener(OnArenaDataManagerReady);
+        ArenaDataManager.Instance.OnTeamInfoChanged -= OnTeamInfoChanged;
+        if (!BoltNetwork.IsServer)
+        {
+            ArenaDataManager.Instance.OnTeamInfosRefreshed -= RefreshAllTeams;
+            ArenaDataManager.Instance.OnUnassignedPlayersRefreshed -= RefreshUnassigned; 
+        }
     }
 
     void Reset()
@@ -94,6 +84,31 @@ public class ArenaLobbyUI : MonoBehaviour
         if (BoltNetwork.IsServer)
         {
             BoltNetwork.LoadScene(ArenaDataManager.Instance.arenaSettingsAsset.arenaSceneName);
+        }
+    }
+
+    void OnTeamInfoChanged(int changedTeamInfo)
+    {
+        if (changedTeamInfo == ArenaDataManager.UnassignedTeamId)
+        {
+            RefreshUnassigned();
+        }
+    }
+
+    void OnArenaDataManagerReady()
+    {
+        ArenaDataManager.Instance.OnTeamInfoChanged += OnTeamInfoChanged;
+            
+        if (BoltNetwork.IsServer)
+        {
+            Reset();
+        }
+        else
+        {
+            ArenaDataManager.Instance.OnTeamInfosRefreshed += RefreshAllTeams;
+            ArenaDataManager.Instance.OnUnassignedPlayersRefreshed += RefreshUnassigned;
+                
+            RefreshAllTeams();
         }
     }
 }
