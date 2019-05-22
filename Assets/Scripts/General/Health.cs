@@ -81,7 +81,7 @@ public class Health<T> : Bolt.EntityEventListener<T> where T : IHealthState
         }
     }
 
-    private void CheckForDeath()
+    public void CheckForDeath()
     {
         if (health <= 0)
         {

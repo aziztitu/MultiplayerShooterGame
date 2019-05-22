@@ -91,7 +91,7 @@ public class ArenaLevelManager : LevelManager
     {
         if (LocalPlayerModel != null)
         {
-            BoltNetwork.Destroy(LocalPlayerModel.gameObject);
+            LocalPlayerModel.DestroyPlayer();
         }
         
         Transform spawnPoint = _spawnPointsRandomizer.GetRandomItem();

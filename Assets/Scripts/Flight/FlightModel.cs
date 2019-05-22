@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class FlightModel : Bolt.EntityBehaviour<IFlightState>
+public class FlightModel : BoltGameObjectEntity<IFlightState>
 {
     public Transform thirdPersonCamTarget;
 
@@ -51,13 +51,17 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
 
         health.OnDeath.AddListener(() =>
         {
-            if (controllingPlayer != null)
+            if (entity.IsOwner)
             {
-                controllingPlayer.health.TakeDamage(controllingPlayer.health.maxhealth,
-                    controllingPlayer.transform.position);
-            }
+                if (controllingPlayer != null)
+                {
+                    controllingPlayer.health.TakeDamage(controllingPlayer.health.maxhealth,
+                        controllingPlayer.transform.position);
+                    RevokePlayerControl();
+                }
 
-            Destroy(gameObject);
+                BoltNetwork.Destroy(gameObject);
+            }
         });
     }
 
@@ -133,6 +137,13 @@ public class FlightModel : Bolt.EntityBehaviour<IFlightState>
 
     public void Show(bool show)
     {
-        gameObject.SetActive(show);
+        if (entity.IsAttached)
+        {
+            state.IsGameObjectActive = show;
+        }
+        else
+        {
+            gameObject.SetActive(show);
+        }
     }
 }

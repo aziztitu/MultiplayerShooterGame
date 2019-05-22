@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Bullet : Projectile<IBulletState>
+public class Bullet: Projectile
 {
     private float speed;
     private Vector3 velocity = Vector3.zero;
@@ -10,6 +10,7 @@ public class Bullet : Projectile<IBulletState>
 
     public override Type InfoAssetType => typeof(BulletInfoAsset);
     public new BulletInfoAsset projectileInfoAsset => GetProjectileInfoAsset<BulletInfoAsset>();
+    public new IBulletState state => GetState<IBulletState>();
 
     private Rigidbody _rigidbody;
 
@@ -65,7 +66,8 @@ public class Bullet : Projectile<IBulletState>
 
         Debug.Log("Hit Object: " + other.transform.gameObject.name);
 
-        Vector3 hitPos = other.ClosestPoint(transform.position);
+//        Vector3 hitPos = other.ClosestPoint(transform.position);
+        Vector3 hitPos = transform.position;
 
         GameObject hitEffect = Instantiate(projectileInfoAsset.hitEffectPrefab, hitPos, Quaternion.identity);
         Destroy(hitEffect, projectileInfoAsset.hitEffectDuration);

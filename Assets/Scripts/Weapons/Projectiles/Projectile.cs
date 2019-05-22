@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class Projectile<T> : Bolt.EntityBehaviour<T> where T : IProjectileState
+public abstract class Projectile: Bolt.EntityBehaviour<IProjectileState>
 {
     protected float range;
 
@@ -11,6 +11,11 @@ public abstract class Projectile<T> : Bolt.EntityBehaviour<T> where T : IProject
     public U GetProjectileInfoAsset<U>() where U : ProjectileInfoAsset
     {
         return projectileInfoAsset as U;
+    }
+    
+    public U GetState<U>() where U : IProjectileState
+    {
+        return (U) state;
     }
 
     private void Awake()
@@ -89,8 +94,4 @@ public abstract class Projectile<T> : Bolt.EntityBehaviour<T> where T : IProject
     }
 
     public abstract void Launch(Vector3 direction);
-}
-
-public abstract class Projectile : Projectile<IProjectileState>
-{
 }

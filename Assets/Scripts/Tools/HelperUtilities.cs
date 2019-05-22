@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Bolt;
 using UnityEngine;
 
 public class HelperUtilities {
@@ -85,5 +86,11 @@ public class HelperUtilities {
         {
             trans.gameObject.layer = layerNumber;
         }
+    }
+
+    public static PrefabId GetBoltPrefabId(GameObject gameObject)
+    {
+        var entity = gameObject.GetComponent<BoltEntity>();
+        return entity ? entity.PrefabId : default(PrefabId);
     }
 }

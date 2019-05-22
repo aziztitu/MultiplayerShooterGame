@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
+public class PlayerModel : BoltGameObjectEntity<IPlayerState>
 {
     public Transform thirdPersonCamTarget;
     public Transform firstPersonCamFollow;
@@ -64,20 +64,22 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
         {
             if (entity.IsOwner)
             {
-                BoltNetwork.Destroy(gameObject);
-
-                Transform prevCameraTransform = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera
-                    .VirtualCamera.transform;
-                CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
-                    .FreeFly);
-                /*CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.position =
-                    prevCameraTransform.position;
-                CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.rotation =
-                    prevCameraTransform.rotation;*/
-
-                if (LevelManager.Instance != null)
+                try
                 {
-                    LevelManager.Instance.LocalPlayerModel = null;
+                    DestroyPlayer();
+
+                    Transform prevCameraTransform = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera
+                        .VirtualCamera.transform;
+                    CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+                        .FreeFly);
+                    /*CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.position =
+                        prevCameraTransform.position;
+                    CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera.VirtualCamera.transform.rotation =
+                        prevCameraTransform.rotation;*/
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e.StackTrace);
                 }
             }
         }));
@@ -154,7 +156,7 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
     public void OnTakenFlightControl(FlightModel flightModel)
     {
         flightModelInControl = flightModel;
-        gameObject.SetActive(false);
+        state.IsGameObjectActive = false;
 //        playerHUDController.Show(false);
         
         CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
@@ -184,10 +186,25 @@ public class PlayerModel : Bolt.EntityBehaviour<IPlayerState>
         }
 
         flightModelInControl = null;
-        gameObject.SetActive(true);
+        state.IsGameObjectActive = true;
 //        playerHUDController.Show(true);
         
         CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
             .FirstPerson);
+    }
+
+    public void DestroyPlayer()
+    {
+        BoltNetwork.Destroy(gameObject);
+        
+        if (privateFlightModel != null)
+        {
+            BoltNetwork.Destroy(privateFlightModel.gameObject);
+        }
+                
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.LocalPlayerModel = null;
+        }
     }
 }
