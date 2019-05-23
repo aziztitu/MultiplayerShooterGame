@@ -21,6 +21,7 @@ public class ArenaSettingsAsset: ScriptableObject
 
     public string arenaName;
     public string arenaSceneName;
+    public Sprite arenaCoverImage;
 
     public LevelPlayerType levelPlayerType = LevelPlayerType.PlayerAndFlight;
 

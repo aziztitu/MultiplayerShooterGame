@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b346e086dc44269aa39bee7ed695f7, type: 3}
   m_Name: Primitive Arena Settings
   m_EditorClassIdentifier: 
+  arenaName: Primitive
   arenaSceneName: ArenaTestScene
+  arenaCoverImage: {fileID: 21300000, guid: 2b0efbcd5c195b240a40861e5d58e237, type: 3}
   levelPlayerType: 0
   teams:
   - maxCapacity: 1

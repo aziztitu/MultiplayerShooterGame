@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b346e086dc44269aa39bee7ed695f7, type: 3}
   m_Name: SciFi Arena Settings
   m_EditorClassIdentifier: 
+  arenaName: Sci-Fi
   arenaSceneName: Arena_SciFi
+  arenaCoverImage: {fileID: 21300000, guid: d383b6a6a675fe843b73d252e2687632, type: 3}
   levelPlayerType: 1
   teams:
   - maxCapacity: 1
+    defaultPlayerType: 0

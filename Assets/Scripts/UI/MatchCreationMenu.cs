@@ -7,8 +7,13 @@ using UnityEngine.UI;
 
 public class MatchCreationMenu : Bolt.GlobalEventListener
 {
+    public GameObject arenaListContainer;
+    public GameObject arenaListItemPrefab;
+    
     public string arenaLobbySceneName = "Arena Lobby";
     public string sceneToGoBack = "Multiplayer Menu";
+
+    public ArenaSettingsAsset[] arenaSettingsAssets;
 
     private ArenaSettingsAsset selectedArenaSettingsAsset = null;
     
@@ -19,10 +24,11 @@ public class MatchCreationMenu : Bolt.GlobalEventListener
             SceneManager.LoadScene(AuthMenu.authMenuSceneName);
             return;
         }
-        
-        var arenaSelectionUis = GetComponentsInChildren<ArenaSelectionUI>();
-        foreach (ArenaSelectionUI arenaSelectionUi in arenaSelectionUis)
+
+        foreach (var arenaSettingsAsset in arenaSettingsAssets)
         {
+            var arenaSelectionUi = Instantiate(arenaListItemPrefab, arenaListContainer.transform).GetComponent<ArenaSelectionUI>();
+            arenaSelectionUi.Init(arenaSettingsAsset);
             arenaSelectionUi.OnArenaSelected += LoadArenaAsServer;
         }
         

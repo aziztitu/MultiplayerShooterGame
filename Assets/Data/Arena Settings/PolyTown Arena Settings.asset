@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b346e086dc44269aa39bee7ed695f7, type: 3}
   m_Name: PolyTown Arena Settings
   m_EditorClassIdentifier: 
+  arenaName: Poly Town
   arenaSceneName: Arena_PolyTown
+  arenaCoverImage: {fileID: 21300000, guid: d84a0543dc0d00c49a9dfc5d83aa1954, type: 3}
   levelPlayerType: 0
   teams:
   - maxCapacity: 1
