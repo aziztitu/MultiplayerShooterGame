@@ -41,6 +41,10 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     public bool refreshTeamInfos_Btn;
 
     private readonly Dictionary<int, ArenaPlayerInfo> arenaPlayerInfoDict = new Dictionary<int, ArenaPlayerInfo>();
+    
+    // Valid in server Only
+    private readonly Dictionary<int, BoltConnection> arenaPlayerConnectionDict = new Dictionary<int, BoltConnection>();
+    
     private Randomizer<ArenaTeamInfo> teamInfoRandomizer;
 
     public event Action<int> OnTeamInfoChanged;
@@ -188,6 +192,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             return;
         }
+        
+        arenaPlayerConnectionDict[playerId] = boltConnection;
 
         ArenaPlayerInfo arenaPlayerInfo = new ArenaPlayerInfo()
         {
@@ -215,6 +221,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             return;
         }
+        
+        arenaPlayerConnectionDict.Remove(playerId);
 
         var arenaPlayerInfo = arenaPlayerInfoDict[playerId];
         if (arenaPlayerInfo.teamId >= 0)
@@ -293,6 +301,14 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         }
 
         return -1;
+    }
+
+    public void DisconnectUnassignedPlayers()
+    {
+        foreach (var unassignedPlayer in unassignedPlayers)
+        {
+            arenaPlayerConnectionDict[unassignedPlayer.playerId].Disconnect();
+        }
     }
 
     void ApplyTeamInfosToState()

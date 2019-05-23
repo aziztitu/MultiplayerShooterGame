@@ -19,8 +19,9 @@ public class ArenaSettingsAsset: ScriptableObject
         public PlayerModel.PlayerType defaultPlayerType;
     }
 
+    public string arenaName;
     public string arenaSceneName;
-    
+
     public LevelPlayerType levelPlayerType = LevelPlayerType.PlayerAndFlight;
 
     public TeamSettings[] teams;

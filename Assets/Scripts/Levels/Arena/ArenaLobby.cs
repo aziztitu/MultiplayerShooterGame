@@ -11,16 +11,6 @@ public class ArenaLobby : Bolt.GlobalEventListener
     private void Start()
     {
         ArenaDataManager.AddOnReadyListener(OnArenaDataManagerReady);
-
-        if (BoltNetwork.IsServer)
-        {
-            string matchName = Guid.NewGuid().ToString();
-            BoltNetwork.SetServerInfo(matchName, new RoomInfo()
-            {
-                roomName = matchName,
-                serverPlayerName = GameManager.Instance.curAccount.name
-            });
-        }
     }
 
     private void OnDestroy()
@@ -89,6 +79,14 @@ public class ArenaLobby : Bolt.GlobalEventListener
     {
         if (BoltNetwork.IsServer)
         {
+            string matchName = Guid.NewGuid().ToString();
+            BoltNetwork.SetServerInfo(matchName, new RoomInfo()
+            {
+                isAccepting = true,
+                roomName = ArenaDataManager.Instance.arenaSettingsAsset.arenaName,
+                serverPlayerName = GameManager.Instance.curAccount.name
+            });
+            
             var dummyJoinResult = new JoinResult()
             {
                 account = GameManager.Instance.curAccount,
@@ -108,17 +106,20 @@ public class ArenaLobby : Bolt.GlobalEventListener
     
     public class RoomInfo : IProtocolToken
     {
+        public bool isAccepting = true;
         public string roomName;
         public string serverPlayerName;
 
         public void Read(UdpPacket packet)
         {
+            isAccepting = packet.ReadBool();
             roomName = packet.ReadString();
             serverPlayerName = packet.ReadString();
         }
 
         public void Write(UdpPacket packet)
         {
+            packet.WriteBool(isAccepting);
             packet.WriteString(roomName);
             packet.WriteString(serverPlayerName);
         }

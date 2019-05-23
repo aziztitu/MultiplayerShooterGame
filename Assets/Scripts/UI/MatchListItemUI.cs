@@ -24,7 +24,7 @@ public class MatchListItemUI : MonoBehaviour
         string ipAndPort = $"{udpEndPoint.Address}:{udpEndPoint.Port}";
         if (roomInfo != null)
         {
-            matchNameText.text = $"{roomInfo.serverPlayerName} [{ipAndPort}]";
+            matchNameText.text = $"{roomInfo.roomName} [Host: {roomInfo.serverPlayerName}]";
         }
         else
         {

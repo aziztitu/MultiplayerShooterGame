@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BasicTools.ButtonInspector;
@@ -83,6 +84,13 @@ public class ArenaLobbyUI : MonoBehaviour
     {
         if (BoltNetwork.IsServer)
         {
+            string matchName = Guid.NewGuid().ToString();
+            BoltNetwork.SetServerInfo(matchName, new ArenaLobby.RoomInfo()
+            {
+                isAccepting = false
+            });
+            
+            ArenaDataManager.Instance.DisconnectUnassignedPlayers();
             BoltNetwork.LoadScene(ArenaDataManager.Instance.arenaSettingsAsset.arenaSceneName);
         }
     }
