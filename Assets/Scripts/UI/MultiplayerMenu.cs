@@ -14,7 +14,7 @@ public class MultiplayerMenu : Bolt.GlobalEventListener
     {
         if (!GameManager.Instance.isLoggedIn)
         {
-            SceneManager.LoadScene(AuthMenu.authMenuSceneName);
+            GoToAuthMenu();
             return;
         }
         
@@ -33,5 +33,16 @@ public class MultiplayerMenu : Bolt.GlobalEventListener
     public void FindMatch()
     {
         SceneManager.LoadScene(matchJoiningScene);
+    }
+
+    public void Logout()
+    {
+        GameManager.Instance.Logout();
+        GoToAuthMenu();
+    }
+
+    public void GoToAuthMenu()
+    {
+        SceneManager.LoadScene(AuthMenu.authMenuSceneName);
     }
 }

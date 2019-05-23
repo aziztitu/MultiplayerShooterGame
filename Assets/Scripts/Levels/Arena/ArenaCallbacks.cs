@@ -8,7 +8,9 @@ public class ArenaCallbacks : Bolt.GlobalEventListener
 {
     public static void SpawnPlayer(Vector3 spawnPos, Quaternion spawnRot)
     {
-        BoltEntity playerEntity = BoltNetwork.Instantiate(BoltPrefabs.Player, spawnPos, spawnRot);
+        var playerType = ArenaLevelManager.Instance.GetLocalPlayerType();
+        
+        BoltEntity playerEntity = BoltNetwork.Instantiate(PlayerTypeMapping.playerPrefabs[playerType], spawnPos, spawnRot);
         PlayerModel playerModel = playerEntity.GetComponent<PlayerModel>();
         ArenaLevelManager.Instance.LocalPlayerModel = playerModel;
 
@@ -17,7 +19,7 @@ public class ArenaCallbacks : Bolt.GlobalEventListener
             Instantiate(ArenaLevelManager.Instance.CinemachineCameraRigPrefab);
         }
     }
-    
+
     private void Start()
     {
     }

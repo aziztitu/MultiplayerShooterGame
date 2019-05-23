@@ -10,19 +10,10 @@ public class ArenaLobby : Bolt.GlobalEventListener
     
     private void Start()
     {
+        ArenaDataManager.AddOnReadyListener(OnArenaDataManagerReady);
+
         if (BoltNetwork.IsServer)
         {
-            var dummyJoinResult = new JoinResult()
-            {
-                account = GameManager.Instance.curAccount,
-                arenaPlayerId = nextArenaPlayerId,
-                success = true
-            };
-            nextArenaPlayerId++;
-
-            ArenaDataManager.Instance.OnBoltPlayerConnected(null, dummyJoinResult);
-            ArenaDataManager.Instance.SetLocalPlayerId(dummyJoinResult.arenaPlayerId);
-
             string matchName = Guid.NewGuid().ToString();
             BoltNetwork.SetServerInfo(matchName, new RoomInfo()
             {
@@ -32,9 +23,16 @@ public class ArenaLobby : Bolt.GlobalEventListener
         }
     }
 
+    private void OnDestroy()
+    {
+        ArenaDataManager.RemoveOnReadyListener(OnArenaDataManagerReady);
+    }
+
     public override void Connected(BoltConnection connection)
     {
         base.Connected(connection);
+        
+        Debug.Log("Connected");
 
         var joinResult = connection.AcceptToken as JoinResult;
         if (joinResult == null)
@@ -46,10 +44,6 @@ public class ArenaLobby : Bolt.GlobalEventListener
         if (BoltNetwork.IsServer)
         {
             ArenaDataManager.Instance.OnBoltPlayerConnected(connection, joinResult);
-        }
-        else
-        {
-            ArenaDataManager.Instance.SetLocalPlayerId(joinResult.arenaPlayerId);
         }
     }
 
@@ -88,6 +82,27 @@ public class ArenaLobby : Bolt.GlobalEventListener
                 joinResult.success = false;
                 BoltNetwork.Refuse(endpoint, joinResult);
             }
+        }
+    }
+
+    void OnArenaDataManagerReady()
+    {
+        if (BoltNetwork.IsServer)
+        {
+            var dummyJoinResult = new JoinResult()
+            {
+                account = GameManager.Instance.curAccount,
+                arenaPlayerId = nextArenaPlayerId,
+                success = true
+            };
+            nextArenaPlayerId++;
+
+            ArenaDataManager.Instance.SetLocalPlayerId(dummyJoinResult.arenaPlayerId);
+            ArenaDataManager.Instance.OnBoltPlayerConnected(null, dummyJoinResult);
+        }
+        else
+        {
+            
         }
     }
     

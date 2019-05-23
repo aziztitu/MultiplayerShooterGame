@@ -12,9 +12,9 @@ public class ArenaMenu : MonoBehaviour
         gameObject.SetActive(show);
     }
     
-    public void GoToLobby()
+    public void GoToMultiplayerMenu()
     {
-        ArenaLevelManager.Instance.GoToLobby(0);
+        ArenaLevelManager.Instance.GoToMultiplayerMenu(0);
     }
     
     public void Respawn()

@@ -7,13 +7,9 @@ using UnityEngine;
 [BoltGlobalBehaviour(BoltNetworkModes.Server, @"^Arena.*")]
 public class ArenaServerCallbacks : Bolt.GlobalEventListener
 {
-    private Randomizer<Transform> _spawnPointsRandomizer;
-
     public override void SceneLoadLocalDone(string scene)
     {
         base.SceneLoadLocalDone(scene);
-
-//        _spawnPointsRandomizer = new Randomizer<Transform>(ArenaLevelManager.Instance.SpawnPoints);
         OnSceneReady();
     }
 
@@ -26,7 +22,20 @@ public class ArenaServerCallbacks : Bolt.GlobalEventListener
 
     void OnSceneReady(BoltConnection connection = null)
     {
-        Transform spawnPoint = _spawnPointsRandomizer.GetRandomItem();
+        int teamId = -1;
+        if (connection == null)
+        {
+            teamId = ArenaDataManager.Instance.GetLocalArenaPlayerInfo().teamId;
+        }
+        else
+        {
+            var playerId = ArenaDataManager.Instance.GetPlayerIdFromConnection(connection);
+            teamId = ArenaDataManager.Instance.GetArenaPlayerInfo(playerId).teamId;
+        }
+
+        var teamConfig = ArenaLevelManager.Instance.teamConfigList[teamId];
+
+        var spawnPoint = teamConfig.spawnPointsRandomizer.GetRandomItem();
         if (spawnPoint != null)
         {
             if (connection == null)

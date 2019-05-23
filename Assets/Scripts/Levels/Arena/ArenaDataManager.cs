@@ -50,6 +50,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     public static ArenaDataManager Instance { get; private set; }
 
     private static readonly List<Action> OnReadyListeners = new List<Action>();
+    private static readonly List<Action> OnReadyOneShotListeners = new List<Action>();
 
     private static void CallOnReadyListeners()
     {
@@ -57,21 +58,45 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             onReadyListener();
         }
+
+        foreach (var onReadyOneShotListener in OnReadyOneShotListeners)
+        {
+            onReadyOneShotListener();
+        }
+        OnReadyOneShotListeners.Clear();
     }
 
-    public static void AddOnReadyListener(Action action)
+    public static void AddOnReadyListener(Action action, bool oneShot = false)
     {
         if (Instance != null)
         {
             action();
+            if (oneShot)
+            {
+                return;
+            }
         }
 
-        OnReadyListeners.Add(action);
+        if (oneShot)
+        {
+            OnReadyOneShotListeners.Add(action);
+        }
+        else
+        {
+            OnReadyListeners.Add(action);
+        }
     }
-    
-    public static void RemoveOnReadyListener(Action action)
+
+    public static void RemoveOnReadyListener(Action action, bool oneShot = false)
     {
-        OnReadyListeners.Remove(action);
+        if (oneShot)
+        {
+            OnReadyOneShotListeners.Remove(action);
+        }
+        else
+        {
+            OnReadyListeners.Remove(action);
+        }
     }
 
     private void Awake()
@@ -93,22 +118,6 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         SetupState();
     }
 
-    public void Initialize(ArenaSettingsAsset arenaSettings)
-    {
-        arenaSettingsAsset = arenaSettings;
-
-        for (int i = 0; i < arenaSettingsAsset.teams.Length; i++)
-        {
-            arenaTeamInfos.Add(new ArenaTeamInfo
-            {
-                teamId = i,
-                teamName = $"Team {'A' + i}"
-            });
-        }
-        
-        teamInfoRandomizer = new Randomizer<ArenaTeamInfo>(arenaTeamInfos);
-    }
-
     void SetupState()
     {
         if (entity.IsOwner)
@@ -126,7 +135,104 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
     public void SetLocalPlayerId(int playerId)
     {
+        Debug.Log("Setting Local Player ID: " + playerId);
         localPlayerId = playerId;
+    }
+    
+    public ArenaPlayerInfo GetLocalArenaPlayerInfo()
+    {
+        return GetArenaPlayerInfo(localPlayerId);
+    }
+
+    public ArenaPlayerInfo GetArenaPlayerInfo(int playerId)
+    {
+        Debug.Log(playerId);
+        Debug.Log(arenaPlayerInfoDict[playerId]);
+        return arenaPlayerInfoDict.ContainsKey(playerId) ? arenaPlayerInfoDict[playerId] : null;
+    }
+
+    public ArenaTeamInfo GetArenaTeamInfo(int playerId)
+    {
+        var playerInfo = GetArenaPlayerInfo(playerId);
+        if (playerInfo != null && playerInfo.playerId >= 0)
+        {
+            return arenaTeamInfos[playerInfo.playerId];
+        }
+
+        return null;
+    }
+    
+    #region Server Only
+
+    public void Initialize(ArenaSettingsAsset arenaSettings)
+    {
+        arenaSettingsAsset = arenaSettings;
+
+        for (int i = 0; i < arenaSettingsAsset.teams.Length; i++)
+        {
+            arenaTeamInfos.Add(new ArenaTeamInfo
+            {
+                teamId = i,
+                teamName = $"Team {'A' + i}"
+            });
+        }
+
+        teamInfoRandomizer = new Randomizer<ArenaTeamInfo>(arenaTeamInfos);
+    }
+
+    public void OnBoltPlayerConnected(BoltConnection boltConnection, ArenaLobby.JoinResult joinResult)
+    {
+        int playerId = GetPlayerIdFromConnection(boltConnection);
+
+        if (arenaPlayerInfoDict.ContainsKey(playerId))
+        {
+            return;
+        }
+
+        ArenaPlayerInfo arenaPlayerInfo = new ArenaPlayerInfo()
+        {
+            teamId = UnassignedTeamId,
+            playerId = joinResult.arenaPlayerId,
+            playerName = joinResult.account.name,
+            isServer = boltConnection == null
+        };
+        unassignedPlayers.Add(arenaPlayerInfo);
+        OnTeamInfoChanged?.Invoke(UnassignedTeamId);
+
+        arenaPlayerInfoDict[playerId] = arenaPlayerInfo;
+
+        PlacePlayerInRandomTeam(arenaPlayerInfo);
+
+        ApplyTeamInfosToState();
+        ApplyUnassignedPlayersToState();
+    }
+
+    public void OnBoltPlayerDisconnected(BoltConnection boltConnection)
+    {
+        int playerId = GetPlayerIdFromConnection(boltConnection);
+
+        if (!arenaPlayerInfoDict.ContainsKey(playerId))
+        {
+            return;
+        }
+
+        var arenaPlayerInfo = arenaPlayerInfoDict[playerId];
+        if (arenaPlayerInfo.teamId >= 0)
+        {
+            arenaTeamInfos[arenaPlayerInfo.teamId].arenaPlayerInfos.Remove(arenaPlayerInfo);
+            OnTeamInfoChanged?.Invoke(arenaPlayerInfo.teamId);
+
+            ApplyTeamInfosToState();
+        }
+        else
+        {
+            unassignedPlayers.Remove(arenaPlayerInfo);
+            OnTeamInfoChanged?.Invoke(UnassignedTeamId);
+
+            ApplyUnassignedPlayersToState();
+        }
+
+        arenaPlayerInfoDict.Remove(playerId);
     }
 
     public void PlacePlayerInTeam(ArenaPlayerInfo arenaPlayerInfo, ArenaTeamInfo teamInfo)
@@ -148,61 +254,6 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         OnTeamInfoChanged?.Invoke(teamInfo.teamId);
     }
 
-    public void OnBoltPlayerConnected(BoltConnection boltConnection, ArenaLobby.JoinResult joinResult)
-    {
-        int connectionId = GetSafeConnectionId(boltConnection);
-
-        if (arenaPlayerInfoDict.ContainsKey(connectionId))
-        {
-            return;
-        }
-
-        ArenaPlayerInfo arenaPlayerInfo = new ArenaPlayerInfo()
-        {
-            teamId = UnassignedTeamId,
-            playerId = joinResult.arenaPlayerId,
-            playerName = joinResult.account.name,
-            isServer = boltConnection == null
-        };
-        unassignedPlayers.Add(arenaPlayerInfo);
-        OnTeamInfoChanged?.Invoke(UnassignedTeamId);
-
-        arenaPlayerInfoDict[connectionId] = arenaPlayerInfo;
-
-        PlacePlayerInRandomTeam(arenaPlayerInfo);
-
-        ApplyTeamInfosToState();
-        ApplyUnassignedPlayersToState();
-    }
-
-    public void OnBoltPlayerDisconnected(BoltConnection boltConnection)
-    {
-        int connectionId = GetSafeConnectionId(boltConnection);
-
-        if (!arenaPlayerInfoDict.ContainsKey(connectionId))
-        {
-            return;
-        }
-
-        var arenaPlayerInfo = arenaPlayerInfoDict[connectionId];
-        if (arenaPlayerInfo.teamId >= 0)
-        {
-            arenaTeamInfos[arenaPlayerInfo.teamId].arenaPlayerInfos.Remove(arenaPlayerInfo);
-            OnTeamInfoChanged?.Invoke(arenaPlayerInfo.teamId);
-
-            ApplyTeamInfosToState();
-        }
-        else
-        {
-            unassignedPlayers.Remove(arenaPlayerInfo);
-            OnTeamInfoChanged?.Invoke(UnassignedTeamId);
-
-            ApplyUnassignedPlayersToState();
-        }
-
-        arenaPlayerInfoDict.Remove(connectionId);
-    }
-
     public void PlacePlayerInRandomTeam(ArenaPlayerInfo arenaPlayerInfo)
     {
         ArenaTeamInfo randomTeam = null;
@@ -210,7 +261,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         for (int i = 0; i < teamInfoRandomizer.items.Count * 2; i++)
         {
             var tmpTeamInfo = teamInfoRandomizer.GetRandomItem();
-            
+
             var teamSettings = arenaSettingsAsset.teams[tmpTeamInfo.teamId];
             if (teamSettings.maxCapacity < 0 ||
                 tmpTeamInfo.arenaPlayerInfos.Count < teamSettings.maxCapacity)
@@ -226,9 +277,22 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         }
     }
 
-    int GetSafeConnectionId(BoltConnection boltConnection)
+    public int GetPlayerIdFromConnection(BoltConnection boltConnection)
     {
-        return boltConnection != null ? (int) boltConnection.ConnectionId : -1;
+        if (boltConnection != null)
+        {
+            var joinResult = boltConnection.AcceptToken as ArenaLobby.JoinResult;
+            if (joinResult != null)
+            {
+                return joinResult.arenaPlayerId;
+            }
+        }
+        else
+        {
+            return localPlayerId;
+        }
+
+        return -1;
     }
 
     void ApplyTeamInfosToState()
@@ -269,6 +333,42 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         }
     }
 
+    void CopyToState(ArenaPlayerInfo playerInfo, ArenaPlayerInfoStateObj statePlayerInfo)
+    {
+        statePlayerInfo.TeamId = playerInfo.teamId;
+        statePlayerInfo.PlayerId = playerInfo.playerId;
+        statePlayerInfo.PlayerName = playerInfo.playerName;
+        statePlayerInfo.IsServer = playerInfo.isServer;
+        statePlayerInfo.Kills = playerInfo.kills;
+    }
+
+    void CopyToState(ArenaTeamInfo teamInfo, ArenaTeamInfoStateObj stateTeamInfo)
+    {
+        stateTeamInfo.TeamId = teamInfo.teamId;
+        stateTeamInfo.TeamName = teamInfo.teamName;
+
+        for (int j = 0;
+            j < stateTeamInfo.ArenaPlayerInfos.Length;
+            j++)
+        {
+            var statePlayerInfo = stateTeamInfo.ArenaPlayerInfos[j];
+
+            if (j < teamInfo.arenaPlayerInfos.Count)
+            {
+                var playerInfo = teamInfo.arenaPlayerInfos[j];
+                CopyToState(playerInfo, statePlayerInfo);
+            }
+            else
+            {
+                statePlayerInfo.TeamId = InvalidArrayItemId;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Client Only
+
     void RefreshTeamInfosFromState()
     {
         Debug.Log("Refreshing team infos");
@@ -305,14 +405,6 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         OnUnassignedPlayersRefreshed?.Invoke();
     }
 
-    void CopyToState(ArenaPlayerInfo playerInfo, ArenaPlayerInfoStateObj statePlayerInfo)
-    {
-        statePlayerInfo.TeamId = playerInfo.teamId;
-        statePlayerInfo.PlayerId = playerInfo.playerId;
-        statePlayerInfo.PlayerName = playerInfo.playerName;
-        statePlayerInfo.IsServer = playerInfo.isServer;
-        statePlayerInfo.Kills = playerInfo.kills;
-    }
 
     ArenaPlayerInfo CreateFromState(ArenaPlayerInfoStateObj statePlayerInfo)
     {
@@ -324,30 +416,10 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             isServer = statePlayerInfo.IsServer,
             kills = statePlayerInfo.Kills,
         };
+
+        arenaPlayerInfoDict[playerInfo.playerId] = playerInfo;
+
         return playerInfo;
-    }
-
-    void CopyToState(ArenaTeamInfo teamInfo, ArenaTeamInfoStateObj stateTeamInfo)
-    {
-        stateTeamInfo.TeamId = teamInfo.teamId;
-        stateTeamInfo.TeamName = teamInfo.teamName;
-
-        for (int j = 0;
-            j < stateTeamInfo.ArenaPlayerInfos.Length;
-            j++)
-        {
-            var statePlayerInfo = stateTeamInfo.ArenaPlayerInfos[j];
-
-            if (j < teamInfo.arenaPlayerInfos.Count)
-            {
-                var playerInfo = teamInfo.arenaPlayerInfos[j];
-                CopyToState(playerInfo, statePlayerInfo);
-            }
-            else
-            {
-                statePlayerInfo.TeamId = InvalidArrayItemId;
-            }
-        }
     }
 
     ArenaTeamInfo CreateFromState(ArenaTeamInfoStateObj stateTeamInfo)
@@ -370,4 +442,6 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
         return teamInfo;
     }
+
+    #endregion
 }

@@ -16,6 +16,7 @@ public class ArenaSettingsAsset: ScriptableObject
     public class TeamSettings
     {
         public int maxCapacity;
+        public PlayerModel.PlayerType defaultPlayerType;
     }
 
     public string arenaSceneName;

@@ -22,4 +22,9 @@ public class GameManager
             name = username
         };
     }
+    
+    public void Logout()
+    {
+        curAccount = null;
+    }
 }

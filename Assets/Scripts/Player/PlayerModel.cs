@@ -7,6 +7,12 @@ using UnityEngine.SceneManagement;
 
 public class PlayerModel : BoltGameObjectEntity<IPlayerState>
 {
+    public enum PlayerType
+    {
+        Blue,
+        Red
+    }
+
     public Transform thirdPersonCamTarget;
     public Transform firstPersonCamFollow;
     public GameObject playerAvatar;
@@ -31,7 +37,7 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         get { return _flightModelInControl; }
         private set { _flightModelInControl = value; }
     }
-    
+
     public bool controllable
     {
         get
@@ -97,10 +103,12 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         SetupState();
 
         playerHUDController.gameObject.SetActive(entity.IsOwner);
-        
+
         if (entity.IsOwner)
         {
-            var privateFlightGameObject = BoltNetwork.Instantiate(BoltPrefabs.Flight);
+            var playerType = ArenaLevelManager.Instance.GetLocalPlayerType();
+
+            var privateFlightGameObject = BoltNetwork.Instantiate(PlayerTypeMapping.flightPrefabs[playerType]);
             privateFlightModel = privateFlightGameObject.GetComponent<FlightModel>();
             privateFlightModel.Show(false);
         }
@@ -163,7 +171,7 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         flightModelInControl = flightModel;
         state.IsGameObjectActive = false;
 //        playerHUDController.Show(false);
-        
+
         CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
             .ThirdPerson);
     }
@@ -180,9 +188,9 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
 
         Vector3 forwardDir = flightModelInControl.transform.forward;
         forwardDir.y = 0;
-        
+
         transform.LookAt(transform.position + (forwardDir * 5), Vector3.up);
-        
+
         _characterController.enabled = true;
 
         if (flightModelInControl == privateFlightModel)
@@ -193,7 +201,7 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         flightModelInControl = null;
         state.IsGameObjectActive = true;
 //        playerHUDController.Show(true);
-        
+
         CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
             .FirstPerson);
     }
@@ -201,12 +209,12 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
     public void DestroyPlayer()
     {
         BoltNetwork.Destroy(gameObject);
-        
+
         if (privateFlightModel != null)
         {
             BoltNetwork.Destroy(privateFlightModel.gameObject);
         }
-                
+
         if (LevelManager.Instance != null)
         {
             LevelManager.Instance.LocalPlayerModel = null;

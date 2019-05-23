@@ -39,6 +39,28 @@ public class MatchJoiningMenu : Bolt.GlobalEventListener
     {
     }
 
+    public override void Connected(BoltConnection connection)
+    {
+        base.Connected(connection);
+        
+        Debug.Log("Connected");
+
+        ArenaDataManager.AddOnReadyListener(() =>
+        {
+            var joinResult = connection.AcceptToken as ArenaLobby.JoinResult;
+            if (joinResult == null)
+            {
+                connection.Disconnect();
+                return;
+            }
+
+            if (BoltNetwork.IsClient)
+            {
+                ArenaDataManager.Instance.SetLocalPlayerId(joinResult.arenaPlayerId);
+            }
+        }, true);
+    }
+    
     public override void SessionListUpdated(Map<Guid, UdpSession> sessionList)
     {
         Debug.LogFormat("Session list updated: {0} total sessions", sessionList.Count);
