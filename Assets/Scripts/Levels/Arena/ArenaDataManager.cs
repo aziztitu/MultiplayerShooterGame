@@ -16,6 +16,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     {
         public int teamId = -1;
         public string teamName = "";
+        public int maxCapacity = -1;
         public List<ArenaPlayerInfo> arenaPlayerInfos = new List<ArenaPlayerInfo>();
     }
 
@@ -41,10 +42,10 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     public bool refreshTeamInfos_Btn;
 
     private readonly Dictionary<int, ArenaPlayerInfo> arenaPlayerInfoDict = new Dictionary<int, ArenaPlayerInfo>();
-    
+
     // Valid in server Only
     private readonly Dictionary<int, BoltConnection> arenaPlayerConnectionDict = new Dictionary<int, BoltConnection>();
-    
+
     private Randomizer<ArenaTeamInfo> teamInfoRandomizer;
 
     public event Action<int> OnTeamInfoChanged;
@@ -67,6 +68,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             onReadyOneShotListener();
         }
+
         OnReadyOneShotListeners.Clear();
     }
 
@@ -142,7 +144,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         Debug.Log("Setting Local Player ID: " + playerId);
         localPlayerId = playerId;
     }
-    
+
     public ArenaPlayerInfo GetLocalArenaPlayerInfo()
     {
         return GetArenaPlayerInfo(localPlayerId);
@@ -165,7 +167,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
         return null;
     }
-    
+
     #region Server Only
 
     public void Initialize(ArenaSettingsAsset arenaSettings)
@@ -177,7 +179,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             arenaTeamInfos.Add(new ArenaTeamInfo
             {
                 teamId = i,
-                teamName = $"Team {'A' + i}"
+                teamName = $"Team {(char)('A' + i)}",
+                maxCapacity = arenaSettingsAsset.teams[i].maxCapacity
             });
         }
 
@@ -192,7 +195,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             return;
         }
-        
+
         arenaPlayerConnectionDict[playerId] = boltConnection;
 
         ArenaPlayerInfo arenaPlayerInfo = new ArenaPlayerInfo()
@@ -221,7 +224,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             return;
         }
-        
+
         arenaPlayerConnectionDict.Remove(playerId);
 
         var arenaPlayerInfo = arenaPlayerInfoDict[playerId];
@@ -362,6 +365,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     {
         stateTeamInfo.TeamId = teamInfo.teamId;
         stateTeamInfo.TeamName = teamInfo.teamName;
+        stateTeamInfo.MaxCapacity = teamInfo.maxCapacity;
 
         for (int j = 0;
             j < stateTeamInfo.ArenaPlayerInfos.Length;
@@ -444,6 +448,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             teamId = stateTeamInfo.TeamId,
             teamName = stateTeamInfo.TeamName,
+            maxCapacity = stateTeamInfo.MaxCapacity
         };
 
         foreach (var statePlayerInfo in stateTeamInfo.ArenaPlayerInfos)

@@ -25,7 +25,10 @@ public class ArenaSelectionUI : MonoBehaviour
         string playersOnEachTeam = "";
         for (int i = 0; i < teamsCount; i++)
         {
-            playersOnEachTeam += $"{arenaSettingsAsset.teams[0].maxCapacity}";
+            int maxCapacity = arenaSettingsAsset.teams[0].maxCapacity;
+            string maxCapacityStr = maxCapacity >= 0 ? maxCapacity.ToString() : "Inf";
+            
+            playersOnEachTeam += $"{maxCapacityStr}";
             if (i != teamsCount - 1)
             {
                 playersOnEachTeam += ", ";
