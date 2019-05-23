@@ -13,7 +13,7 @@ public class ArenaServerCallbacks : Bolt.GlobalEventListener
     {
         base.SceneLoadLocalDone(scene);
 
-        _spawnPointsRandomizer = new Randomizer<Transform>(ArenaLevelManager.Instance.SpawnPoints);
+//        _spawnPointsRandomizer = new Randomizer<Transform>(ArenaLevelManager.Instance.SpawnPoints);
         OnSceneReady();
     }
 

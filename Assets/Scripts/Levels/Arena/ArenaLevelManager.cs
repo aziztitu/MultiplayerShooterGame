@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class ArenaLevelManager : LevelManager
 {
+    public const int maxTeamsAllowed = 2;
+    
     public ArenaSettingsAsset arenaSettingsAsset;
     
     public GameObject CinemachineCameraRigPrefab;
@@ -19,17 +21,14 @@ public class ArenaLevelManager : LevelManager
 
     public string MultiplayerSceneName = "Multiplayer Menu";
     public string EndGameCreditsSceneName = "EndCredits";
-
-    public List<Transform> SpawnPoints;
     
-    private Randomizer<Transform> _spawnPointsRandomizer;
+    public List<ArenaTeamConfig> teamConfigList = new List<ArenaTeamConfig>();
 
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
 
     private new void Awake()
     {
         base.Awake();
-        _spawnPointsRandomizer = new Randomizer<Transform>(ArenaLevelManager.Instance.SpawnPoints);
         arenaMenu.ShowHide(false);
 
         SetupPlayerHooks();
@@ -56,9 +55,23 @@ public class ArenaLevelManager : LevelManager
     {
         if (arenaSettingsAsset)
         {
-            if (arenaSettingsAsset.teams.Length > 2)
+            if (arenaSettingsAsset.teams.Length > maxTeamsAllowed)
             {
-                Debug.LogWarning("Only a maximum of two teams is supported now");
+                Debug.LogWarning($"Only a maximum of {maxTeamsAllowed} teams is supported now");
+            }
+
+            int numTeams = Math.Min(arenaSettingsAsset.teams.Length, maxTeamsAllowed);
+
+            if (teamConfigList.Count < numTeams)
+            {
+                for (int i = 0; i < numTeams - teamConfigList.Count; i++)
+                {
+                    teamConfigList.Add(null);
+                }
+            }
+            else if (teamConfigList.Count > numTeams)
+            {
+                teamConfigList.RemoveRange(numTeams, teamConfigList.Count - numTeams);
             }
         }
     }
@@ -107,12 +120,13 @@ public class ArenaLevelManager : LevelManager
             LocalPlayerModel.DestroyPlayer();
         }
         
-        Transform spawnPoint = _spawnPointsRandomizer.GetRandomItem();
+        // TODO: Implement spawning in one of the team spawn points
+        /*Transform spawnPoint = _spawnPointsRandomizer.GetRandomItem();
         if (spawnPoint != null)
         {
             ArenaCallbacks.SpawnPlayer(spawnPoint.transform.position, spawnPoint.transform.rotation);
             CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState.FirstPerson);
-        }
+        }*/
     }
 
     IEnumerator GoToLobbyAfterSecs(float delay)
