@@ -11,7 +11,8 @@ public class ArenaLobbyUI : MonoBehaviour
     public GameObject teamListContainer;
     public GameObject serverTools;
     public GameObject arenaLobbyTeamUIPrefab;
-    public string sceneToGoBack = "Multiplayer Menu";
+    public string sceneToGoBack_Server = "";
+    public string sceneToGoBack_Client = "";
 
     private List<ArenaLobbyTeamUI> teamUIList = new List<ArenaLobbyTeamUI>();
     private bool initializedListeners = false;
@@ -33,7 +34,7 @@ public class ArenaLobbyUI : MonoBehaviour
         if (!BoltNetwork.IsServer)
         {
             ArenaDataManager.Instance.OnTeamInfosRefreshed -= RefreshAllTeams;
-            ArenaDataManager.Instance.OnUnassignedPlayersRefreshed -= RefreshUnassigned; 
+            ArenaDataManager.Instance.OnUnassignedPlayersRefreshed -= RefreshUnassigned;
         }
     }
 
@@ -43,7 +44,7 @@ public class ArenaLobbyUI : MonoBehaviour
         {
             Destroy(teamUi.gameObject);
         }
-            
+
         foreach (var teamInfo in ArenaDataManager.Instance.arenaTeamInfos)
         {
             var teamUI = Instantiate(arenaLobbyTeamUIPrefab, teamListContainer.transform)
@@ -58,7 +59,7 @@ public class ArenaLobbyUI : MonoBehaviour
     {
         if (teamUIList.Count != ArenaDataManager.Instance.arenaTeamInfos.Count)
         {
-            Reset();       
+            Reset();
         }
         else
         {
@@ -77,9 +78,9 @@ public class ArenaLobbyUI : MonoBehaviour
 
     public void GoBack()
     {
-        SceneManager.LoadScene(sceneToGoBack);
+        SceneManager.LoadScene(BoltNetwork.IsServer ? sceneToGoBack_Server : sceneToGoBack_Client);
     }
-    
+
     public void StartGame()
     {
         if (BoltNetwork.IsServer)
@@ -89,7 +90,7 @@ public class ArenaLobbyUI : MonoBehaviour
             {
                 isAccepting = false
             });
-            
+
             ArenaDataManager.Instance.DisconnectUnassignedPlayers();
             BoltNetwork.LoadScene(ArenaDataManager.Instance.arenaSettingsAsset.arenaSceneName);
         }
@@ -106,7 +107,7 @@ public class ArenaLobbyUI : MonoBehaviour
     void OnArenaDataManagerReady()
     {
         ArenaDataManager.Instance.OnTeamInfoChanged += OnTeamInfoChanged;
-            
+
         if (BoltNetwork.IsServer)
         {
             Reset();
@@ -115,7 +116,7 @@ public class ArenaLobbyUI : MonoBehaviour
         {
             ArenaDataManager.Instance.OnTeamInfosRefreshed += RefreshAllTeams;
             ArenaDataManager.Instance.OnUnassignedPlayersRefreshed += RefreshUnassigned;
-                
+
             RefreshAllTeams();
         }
     }

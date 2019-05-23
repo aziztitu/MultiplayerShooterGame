@@ -991,7 +991,7 @@ MonoBehaviour:
   m_Content: {fileID: 90553218}
   m_Horizontal: 1
   m_Vertical: 0
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -1707,7 +1707,8 @@ MonoBehaviour:
   serverTools: {fileID: 484747455}
   arenaLobbyTeamUIPrefab: {fileID: 4180669934628541063, guid: 880e787961bcb8948b2728ef63f2c9e3,
     type: 3}
-  sceneToGoBack: Multiplayer Menu
+  sceneToGoBack_Server: Match Creation Menu
+  sceneToGoBack_Client: Match Joining Menu
   refreshAllItems_Btn: 0
 --- !u!114 &1582112706
 MonoBehaviour:
