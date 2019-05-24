@@ -21,7 +21,7 @@ MonoBehaviour:
     teamColor: {r: 0.11525454, g: 0.2666775, b: 0.6603774, a: 1}
     maxCapacity: 1
     defaultPlayerType: 0
-  - teamName: Team B
+  - teamName: Team Z
     teamColor: {r: 0.5660378, g: 0.16984215, b: 0.1254895, a: 1}
     maxCapacity: 1
     defaultPlayerType: 1
