@@ -23,4 +23,6 @@ public class ArenaSettingsAsset: ScriptableObject
     public TeamSettings[] teams;
 
     public int arenaMaxCapacity => teams.Sum(team => team.maxCapacity);
+
+    public int roundDuration = 300;
 }

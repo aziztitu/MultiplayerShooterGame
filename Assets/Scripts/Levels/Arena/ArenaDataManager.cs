@@ -90,6 +90,11 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     /// [Only valid in Server]
     /// </summary>
     private IEnumerator pingRefresherCoroutine = null;
+    
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
+    private IEnumerator countdownTimerCoroutine = null;
 
     /// <summary>
     /// [Only valid in Server]
@@ -100,6 +105,11 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     /// [Only valid in Server]
     /// </summary>
     public event Action<int> OnTeamInfoChanged;
+    
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
+    private float roundStartTime = float.MinValue;
 
     #endregion
 
@@ -204,6 +214,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         }
         else
         {
+            state.Timer = 0;
             state.AddCallback("ArenaTeamInfo[]", ((newState, path, indices) => { RefreshTeamInfosFromState(); }));
             state.AddCallback("UnassignedPlayers[]",
                 ((newState, path, indices) => { RefreshUnassignedPlayersFromState(); }));
@@ -408,6 +419,36 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
             yield return new WaitForSecondsRealtime(pingRefreshInterval);
         }
+    }
+
+    public void ResetTimer()
+    {
+        if (BoltNetwork.IsServer)
+        {
+            roundStartTime = Time.time;
+
+            if (countdownTimerCoroutine != null)
+            {
+                countdownTimerCoroutine.Reset();
+                countdownTimerCoroutine = null;
+            }
+
+            countdownTimerCoroutine = CountdownTimer();
+            StartCoroutine(countdownTimerCoroutine);
+        }
+    }
+
+    IEnumerator CountdownTimer()
+    {
+        do
+        {
+            int secsElapsed = (int) (Time.time - roundStartTime);
+            state.Timer = Math.Max(arenaSettingsAsset.roundDuration - secsElapsed, 0);
+
+            yield return new WaitForSecondsRealtime(1);
+        } while (state.Timer > 0);
+
+        countdownTimerCoroutine = null;
     }
 
     public void OnBoltPlayerConnected(BoltConnection boltConnection, ArenaLobby.JoinResult joinResult)

@@ -26,6 +26,8 @@ public class ArenaLevelManager : LevelManager
 
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
 
+    public event Action onMatchStarted;
+
     private new void Awake()
     {
         base.Awake();
@@ -43,6 +45,11 @@ public class ArenaLevelManager : LevelManager
 
         SetupPlayerHooks();
         OnLocalPlayerModelChanged += SetupPlayerHooks;
+    }
+
+    private void Start()
+    {
+        OnMatchStarted();
     }
 
     private void SetupPlayerHooks()
@@ -88,6 +95,16 @@ public class ArenaLevelManager : LevelManager
         }
     }
 
+    void OnMatchStarted()
+    {
+        if (BoltNetwork.IsServer)
+        {
+            ArenaDataManager.Instance.ResetTimer();
+        }
+        
+        onMatchStarted?.Invoke();
+    }
+
     public PlayerModel.PlayerType GetPlayerType(int playerId)
     {
         var arenaPlayerInfo = ArenaDataManager.Instance.GetArenaPlayerInfo(playerId);
@@ -108,6 +125,11 @@ public class ArenaLevelManager : LevelManager
     {
         if (LocalPlayerModel != null)
         {
+            if (LocalPlayerModel.health.isAlive && LocalPlayerModel.playerId.HasValue)
+            {
+                ArenaDataManager.Instance.PlayerDied(-1, LocalPlayerModel.playerId.Value);
+            }
+            
             LocalPlayerModel.DestroyPlayer();
         }
 
