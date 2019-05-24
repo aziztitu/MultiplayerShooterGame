@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 4180669934539315329}
   - component: {fileID: 4180669934539315331}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: TeamName Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -477,6 +477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13c665dcfe2247cb9406f1c7a5796fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teamNameBG: {fileID: 4180669934539315329}
   teamNameText: {fileID: 4180669935175768240}
   playerListContainer: {fileID: 4180669935288963781}
   playerInfoPrefab: {fileID: 465290365312954003, guid: 732eb4a29b1e09a4abac5509bf1dab58,

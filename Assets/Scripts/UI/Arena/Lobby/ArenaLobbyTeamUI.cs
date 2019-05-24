@@ -1,8 +1,10 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArenaLobbyTeamUI : MonoBehaviour
 {
+    public Image teamNameBG;
     public TextMeshProUGUI teamNameText;
     public GameObject playerListContainer;
     public GameObject playerInfoPrefab;
@@ -37,6 +39,8 @@ public class ArenaLobbyTeamUI : MonoBehaviour
             string maxCapacityStr = maxCapacity >= 0 ? maxCapacity.ToString() : "Inf";
             
             teamNameText.text = $"{teamInfo.teamName} (Max: {maxCapacityStr})";
+            teamNameBG.color = teamInfo.teamColor;
+            
             foreach (var playerInfo in teamInfo.arenaPlayerInfos)
             {
                 var playerInfoItemUi = Instantiate(playerInfoPrefab, playerListContainer.transform)
