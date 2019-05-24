@@ -72,7 +72,7 @@ public class RangeProjectileWeapon : RangeWeapon
             BoltNetwork.Instantiate(projectilePrefab, muzzle.position, muzzle.rotation);
         Projectile projectile = projectileEntity.GetComponent<Projectile>();
         projectile.SetBulletRange(weaponInfoAsset.maxRange);
-        projectile.Launch(shootDir);
+        projectile.Launch(shootDir, weaponOwner);
 
         return true;
     }

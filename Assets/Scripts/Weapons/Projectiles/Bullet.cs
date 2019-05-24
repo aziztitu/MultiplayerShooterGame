@@ -37,7 +37,7 @@ public class Bullet: Projectile
         speed = bulletSpeed;
     }
 
-    public override void Launch(Vector3 direction)
+    protected override void OnLaunched(Vector3 direction)
     {
         transform.LookAt(transform.position + (direction * 5));
         launchPos = transform.position;
@@ -75,7 +75,7 @@ public class Bullet: Projectile
         Shootable shootable;
         if (IsShootable(other, out shootable))
         {
-            shootable.OnShot(projectileInfoAsset.damage, hitPos);
+            shootable.OnShot(projectileInfoAsset.damage, hitPos, launchedBy);
         }
 
         BoltNetwork.Destroy(gameObject);

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BasicTools.ButtonInspector;
+using Bolt;
 using UnityEngine;
 
 public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
@@ -14,9 +15,9 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     private static readonly List<Action> OnReadyListeners = new List<Action>();
     private static readonly List<Action> OnReadyOneShotListeners = new List<Action>();
 
-    /*
-     * Always valid on server. Valid in clients after ArenaLevelManager's creation.
-     */
+    /// <summary>
+    /// Always valid on server. Valid in clients after ArenaLevelManager's creation.
+    /// </summary>
     public ArenaSettingsAsset arenaSettingsAsset;
 
     [Serializable]
@@ -42,9 +43,20 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         public int assists = 0;
         public int deaths = 0;
         public float ping = 0;
+
+        #region Server Fields
+
+        /// <summary>
+        /// [Only valid in Server]
+        /// </summary>
+        public readonly HashSet<int> attackers = new HashSet<int>();
+
+        #endregion
     }
 
     public float pingRefreshInterval = 5f;
+    public int killScore = 100;
+    public int assistScore = 20;
 
     public List<ArenaTeamInfo> arenaTeamInfos = new List<ArenaTeamInfo>();
     public List<ArenaPlayerInfo> unassignedPlayers = new List<ArenaPlayerInfo>();
@@ -59,34 +71,34 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
     #region Server Fields
 
-    /**
-     * Number of players connected to server. [Only valid in Server]
-     */
+    /// <summary>
+    /// Number of players connected to server. [Only valid in Server]
+    /// </summary>
     public int connectedPlayersCount => BoltNetwork.Connections.Count() + 1;
 
-    /**
-     * [Only valid in Server]
-     */
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
     public bool canAddPlayer => connectedPlayersCount < arenaSettingsAsset.arenaMaxCapacity;
 
-    /**
-     * [Only valid in Server]
-     */
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
     private readonly Dictionary<int, BoltConnection> arenaPlayerConnectionDict = new Dictionary<int, BoltConnection>();
 
-    /**
-     * [Only valid in Server]
-     */
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
     private IEnumerator pingRefresherCoroutine = null;
 
-    /**
-     * [Only valid in Server]
-     */
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
     private Randomizer<ArenaTeamInfo> teamInfoRandomizer;
 
-    /**
-     * [Only called in Server]
-     */
+    /// <summary>
+    /// [Only valid in Server]
+    /// </summary>
     public event Action<int> OnTeamInfoChanged;
 
     #endregion
@@ -94,14 +106,14 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
     #region Client Fields
 
-    /**
-     * [Only called in Client]
-     */
+    /// <summary>
+    /// [Only called in Client]
+    /// </summary>
     public event Action OnAllTeamInfosRefreshed;
 
-    /**
-     * [Only called in Client]
-     */
+    /// <summary>
+    /// [Only called in Client]
+    /// </summary>
     public event Action OnUnassignedPlayersRefreshed;
 
     #endregion
@@ -211,8 +223,6 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
     public ArenaPlayerInfo GetArenaPlayerInfo(int playerId)
     {
-        Debug.Log(playerId);
-        Debug.Log(arenaPlayerInfoDict[playerId]);
         return arenaPlayerInfoDict.ContainsKey(playerId) ? arenaPlayerInfoDict[playerId] : null;
     }
 
@@ -236,6 +246,110 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     {
         return (teamId >= 0 && teamId < arenaSettingsAsset.teams.Length) ? arenaSettingsAsset.teams[teamId] : null;
     }
+
+    public void PlayerAttacked(int attackerPlayerId, int victimPlayerId, float damage)
+    {
+        Debug.Log("AttackerPlayerId: " + attackerPlayerId);
+        Debug.Log("VictimPlayerId: " + victimPlayerId);
+        if (BoltNetwork.IsServer)
+        {
+            var attackerPlayerInfo = GetArenaPlayerInfo(attackerPlayerId);
+            var victimPlayerInfo = GetArenaPlayerInfo(victimPlayerId);
+
+            if (attackerPlayerInfo != null)
+            {
+                attackerPlayerInfo.score += (int) damage;
+                victimPlayerInfo?.attackers.Add(attackerPlayerId);
+                
+                OnTeamInfoChanged?.Invoke(attackerPlayerInfo.teamId);
+
+                // TODO: Apply Player Infos Individually
+                ApplyTeamInfosToState();
+            }
+        }
+        else
+        {
+            var playerAttackedEvent = PlayerAttackedEvent.Create(entity.Source, ReliabilityModes.ReliableOrdered);
+            playerAttackedEvent.AttackerPlayerId = attackerPlayerId;
+            playerAttackedEvent.VictimPlayerId = victimPlayerId;
+            playerAttackedEvent.Damage = damage;
+            playerAttackedEvent.Send();
+        }
+    }
+
+    public void PlayerDied(int killerPlayerId, int victimPlayerId)
+    {
+        if (BoltNetwork.IsServer)
+        {
+            var killerPlayerInfo = GetArenaPlayerInfo(killerPlayerId);
+            var victimPlayerInfo = GetArenaPlayerInfo(victimPlayerId);
+
+            if (victimPlayerInfo != null)
+            {
+                ArenaTeamInfo killerTeamInfo = null;
+                
+                if (killerPlayerInfo != null)
+                {
+                    killerPlayerInfo.kills++;
+                    killerPlayerInfo.score += killScore;
+                    OnTeamInfoChanged?.Invoke(killerPlayerInfo.teamId);
+
+                    killerTeamInfo = GetArenaTeamInfo(killerPlayerInfo.teamId);
+                }
+
+                if (killerTeamInfo != null)
+                {
+                    killerTeamInfo.kills++;
+                    OnTeamInfoChanged?.Invoke(killerTeamInfo.teamId);
+                }
+                else
+                {
+                    foreach (var arenaTeamInfo in arenaTeamInfos)
+                    {
+                        if (arenaTeamInfo.teamId == victimPlayerInfo.teamId)
+                        {
+                            continue;
+                        }
+
+                        arenaTeamInfo.kills++;
+                        OnTeamInfoChanged?.Invoke(arenaTeamInfo.teamId);
+                    }
+                }
+                
+                victimPlayerInfo.deaths++;
+                OnTeamInfoChanged?.Invoke(victimPlayerInfo.teamId);
+
+                foreach (var assistPlayerId in victimPlayerInfo.attackers)
+                {
+                    if (assistPlayerId == killerPlayerId)
+                    {
+                        continue;
+                    }
+
+                    var assistPlayerInfo = GetArenaPlayerInfo(assistPlayerId);
+                    if (assistPlayerInfo != null)
+                    {
+                        assistPlayerInfo.assists++;
+                        assistPlayerInfo.score += assistScore;
+                        OnTeamInfoChanged?.Invoke(assistPlayerInfo.teamId);
+                    }
+                }
+                
+                victimPlayerInfo.attackers.Clear();
+            }
+
+            // TODO: Apply Player Infos and Team Infos Individually
+            ApplyTeamInfosToState();
+        }
+        else
+        {
+            var playerDeathEvent = PlayerDeathEvent.Create(entity.Source, ReliabilityModes.ReliableOrdered);
+            playerDeathEvent.KillerPlayerId = killerPlayerId;
+            playerDeathEvent.VictimPlayerId = victimPlayerId;
+            playerDeathEvent.Send();
+        }
+    }
+
 
     #region Server Methods
 
@@ -423,6 +537,12 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         }
     }
 
+    void ApplyPlayerInfoToState(ArenaPlayerInfo arenaPlayerInfo)
+    {
+        // TODO: Only apply the modified player info
+        ApplyTeamInfosToState();
+    }
+
     void ApplyTeamInfosToState()
     {
         for (int i = 0; i < state.ArenaTeamInfo.Length; i++)
@@ -501,6 +621,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     }
 
     #endregion
+
 
     #region Client Methods
 

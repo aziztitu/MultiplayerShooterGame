@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
+using Bolt;
+using UdpKit;
 using UnityEngine;
 
 public abstract class Weapon : MonoBehaviour
 {
     public WeaponInfoAsset weaponInfoAsset;
+    protected IWeaponOwner weaponOwner;
+
     public abstract Type InfoAssetType { get; }
 
     public T GetWeaponInfoAsset<T>() where T : WeaponInfoAsset
@@ -34,4 +39,14 @@ public abstract class Weapon : MonoBehaviour
             }
         }
     }
+
+    public void AssignWeaponOwner(IWeaponOwner owner)
+    {
+        weaponOwner = owner;
+    }
+}
+
+public interface IWeaponOwner
+{
+    int? playerId { get; }
 }

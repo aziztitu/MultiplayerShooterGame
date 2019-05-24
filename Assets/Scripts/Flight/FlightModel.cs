@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class FlightModel : BoltGameObjectEntity<IFlightState>
+public class FlightModel : BoltGameObjectEntity<IFlightState>, IWeaponOwner
 {
     public Transform thirdPersonCamTarget;
 
@@ -38,8 +38,12 @@ public class FlightModel : BoltGameObjectEntity<IFlightState>
             return _controllingPlayer != null && cameraIsStable;
         }
     }
-    
+
     private bool isInArena => ArenaDataManager.Instance != null;
+
+    public int? playerId => _controllingPlayer != null ? _controllingPlayer.playerId : null;
+
+    private Shootable _shootable;
 
     private void Awake()
     {
@@ -50,21 +54,30 @@ public class FlightModel : BoltGameObjectEntity<IFlightState>
         flightHudController = GetComponentInChildren<FlightHUDController>(false);
         interactionController = GetComponentInChildren<InteractionController>();
         health = GetComponent<Health>();
+        _shootable = GetComponentInChildren<Shootable>();
+        
+        flightAvatar.flightWeapon.AssignWeaponOwner(this);
 
-        health.OnDeath.AddListener(() =>
+        health.onDamageTaken += (float damage, int attackerPlayerId) =>
+        {
+            ArenaDataManager.Instance.PlayerAttacked(attackerPlayerId, playerId ?? -1, damage);
+        };
+        
+        health.OnDeath.AddListener((killerPlayerId) =>
         {
             if (entity.IsOwner)
             {
                 if (controllingPlayer != null)
                 {
-                    controllingPlayer.health.TakeDamage(controllingPlayer.health.maxhealth,
-                        controllingPlayer.transform.position);
+                    controllingPlayer.health.TakeDamage(controllingPlayer.health.maxhealth, killerPlayerId);
                     RevokePlayerControl();
                 }
 
                 BoltNetwork.Destroy(gameObject);
             }
         });
+
+        _shootable.onShotEvent.AddListener(OnShot);
     }
 
     // Start is called before the first frame update
@@ -101,6 +114,17 @@ public class FlightModel : BoltGameObjectEntity<IFlightState>
     {
         state.SetTransforms(state.FlightTransform, transform);
 //        state.SetTransforms(state.AvatarTransform, flightAvatar.transform);
+    }
+
+    private void OnShot(float damage, Vector3 hitPos, IWeaponOwner weaponOwner)
+    {
+        int attackerPlayerId = -1;
+        if (weaponOwner != null)
+        {
+            attackerPlayerId = weaponOwner.playerId ?? -1;
+        }
+        
+        health.TakeDamage(damage, attackerPlayerId);
     }
 
     public void RequestControl(InteractionController otherInteractionController)

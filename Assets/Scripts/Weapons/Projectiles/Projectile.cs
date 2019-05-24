@@ -8,6 +8,8 @@ public abstract class Projectile: Bolt.EntityBehaviour<IProjectileState>
     public ProjectileInfoAsset projectileInfoAsset;
     public abstract Type InfoAssetType { get; }
 
+    protected IWeaponOwner launchedBy = null;
+
     public U GetProjectileInfoAsset<U>() where U : ProjectileInfoAsset
     {
         return projectileInfoAsset as U;
@@ -93,5 +95,11 @@ public abstract class Projectile: Bolt.EntityBehaviour<IProjectileState>
         return false;
     }
 
-    public abstract void Launch(Vector3 direction);
+    public void Launch(Vector3 direction, IWeaponOwner weaponOwner)
+    {
+        launchedBy = weaponOwner;
+        OnLaunched(direction);
+    }
+
+    protected abstract void OnLaunched(Vector3 direction);
 }

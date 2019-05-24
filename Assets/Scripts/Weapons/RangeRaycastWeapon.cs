@@ -37,7 +37,7 @@ public class RangeRaycastWeapon : RangeWeapon
         if (shootable)
         {
             Debug.Log("Hit Object: " + raycastHit.transform.gameObject.name);
-            shootable.OnShot(weaponInfoAsset.damage, raycastHit.point);
+            shootable.OnShot(weaponInfoAsset.damage, raycastHit.point, weaponOwner);
         }
     }
 }

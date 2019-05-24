@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerModel : BoltGameObjectEntity<IPlayerState>
+public class PlayerModel : BoltGameObjectEntity<IPlayerState>, IWeaponOwner
 {
     public enum PlayerType
     {
@@ -51,11 +51,14 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
 
     private bool isInArena => ArenaDataManager.Instance != null;
 
+    public int? playerId => state.ArenaPlayerId;
+
     #endregion
 
     private FlightModel privateFlightModel;
     private CharacterController _characterController;
     private Animator _animator;
+    private Shootable _shootable;
 
     void Awake()
     {
@@ -67,13 +70,21 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         playerHUDController = GetComponentInChildren<PlayerHUDController>();
         interactionController = GetComponentInChildren<InteractionController>();
         health = GetComponent<Health>();
+        _shootable = GetComponentInChildren<Shootable>();
 
-        health.OnDeath.AddListener((() =>
+        health.onDamageTaken += (float damage, int attackerPlayerId) =>
+        {
+            ArenaDataManager.Instance.PlayerAttacked(attackerPlayerId, playerId ?? -1, damage);
+        };
+        
+        health.OnDeath.AddListener(((killerPlayerId) =>
         {
             if (entity.IsOwner)
             {
                 try
                 {
+                    ArenaDataManager.Instance.PlayerDied(killerPlayerId, playerId ?? -1);
+                    
                     DestroyPlayer();
 
                     Transform prevCameraTransform = CinemachineCameraManager.Instance.CurrentStatefulCinemachineCamera
@@ -91,6 +102,8 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
                 }
             }
         }));
+        
+        _shootable.onShotEvent.AddListener(OnShot);
     }
 
     // Use this for initialization
@@ -189,6 +202,17 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         }
     }
 
+    public void OnShot(float damage, Vector3 hitPos, IWeaponOwner weaponOwner)
+    {
+        int attackerPlayerId = -1;
+        if (weaponOwner != null)
+        {
+            attackerPlayerId = weaponOwner.playerId ?? -1;
+        }
+
+        health.TakeDamage(damage, attackerPlayerId);
+    }
+
     public void OnTakenFlightControl(FlightModel flightModel)
     {
         flightModelInControl = flightModel;
@@ -225,7 +249,12 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         }
 
         flightModelInControl = null;
-        state.IsGameObjectActive = true;
+
+        if (entity.IsAttached)
+        {
+            state.IsGameObjectActive = true;
+        }
+        
 //        playerHUDController.Show(true);
 
         CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState

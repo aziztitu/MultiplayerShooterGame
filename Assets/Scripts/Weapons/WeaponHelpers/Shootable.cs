@@ -5,12 +5,12 @@ using UnityEngine.Events;
 public class Shootable : MonoBehaviour
 {
     [Serializable]
-    public class ShootableEvent: UnityEvent<float, Vector3> {}
+    public class ShootableEvent: UnityEvent<float, Vector3, IWeaponOwner> {}
     
     public ShootableEvent onShotEvent;
 
-    public void OnShot(float damage, Vector3 shotPosition)
+    public void OnShot(float damage, Vector3 shotPosition, IWeaponOwner weaponOwner)
     {
-        onShotEvent.Invoke(damage, shotPosition);
+        onShotEvent.Invoke(damage, shotPosition, weaponOwner);
     }
 }

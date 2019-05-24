@@ -51,4 +51,16 @@ public class ArenaServerCallbacks : Bolt.GlobalEventListener
             }
         }
     }
+    
+    public override void OnEvent(PlayerAttackedEvent e)
+    {
+        base.OnEvent(e);
+        ArenaDataManager.Instance.PlayerAttacked(e.AttackerPlayerId, e.VictimPlayerId, e.Damage);
+    }
+
+    public override void OnEvent(PlayerDeathEvent e)
+    {
+        base.OnEvent(e);
+        ArenaDataManager.Instance.PlayerDied(e.KillerPlayerId, e.VictimPlayerId);
+    }
 }

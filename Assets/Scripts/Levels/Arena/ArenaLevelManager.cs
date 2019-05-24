@@ -49,7 +49,7 @@ public class ArenaLevelManager : LevelManager
     {
         if (LocalPlayerModel)
         {
-            LocalPlayerModel.health.OnDeath.AddListener(() => { arenaMenu.ShowHide(true); });
+            LocalPlayerModel.health.OnDeath.AddListener((killerPlayerId) => { arenaMenu.ShowHide(true); });
         }
     }
 

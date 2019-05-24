@@ -6,7 +6,7 @@ public class FlightAvatar : MonoBehaviour
 {
     public GameObject trailObject;
     public RangeWeapon flightWeapon;
-    
+
     // Start is called before the first frame update
     void Start()
     {

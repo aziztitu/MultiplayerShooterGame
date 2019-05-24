@@ -17,7 +17,9 @@ public class PlayerCombatController : Bolt.EntityBehaviour<IPlayerState>
         _playerModel = GetComponent<PlayerModel>();
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
+        
         rangeWeapon = GetComponentInChildren<RangeWeapon>();
+        rangeWeapon.AssignWeaponOwner(_playerModel);
     }
 
     // Start is called before the first frame update

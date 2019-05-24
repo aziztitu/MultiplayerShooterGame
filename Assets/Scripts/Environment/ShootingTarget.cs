@@ -22,7 +22,7 @@ public class ShootingTarget : MonoBehaviour
         health = Mathf.Clamp(health, 0, maxHealth);
     }
 
-    public void OnHit(float damage, Vector3 hitPosition)
+    public void OnHit(float damage, Vector3 hitPosition, IWeaponOwner weaponOwner)
     {
         health -= damage;
         health = Mathf.Clamp(health, 0, maxHealth);
