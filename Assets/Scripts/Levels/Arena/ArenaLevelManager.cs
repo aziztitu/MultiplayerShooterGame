@@ -13,20 +13,16 @@ public class ArenaLevelManager : LevelManager
 
     public GameObject CinemachineCameraRigPrefab;
 
-    public ArenaMenu arenaMenu;
-
-    public GameObject WinScreen;
-    public GameObject LoseScreen;
-    public GameObject FadeOut;
+    public ArenaMenu arenaMenu { get; private set; }
+    public ArenaStatsMenu arenaStatsMenu { get; private set; }
 
     public string MultiplayerSceneName = "Multiplayer Menu";
-    public string EndGameCreditsSceneName = "EndCredits";
 
     public List<ArenaTeamConfig> teamConfigList = new List<ArenaTeamConfig>();
 
-    public ArenaSettingsAsset.LevelPlayerType levelPlayerType => arenaSettingsAsset != null
+    public override LevelManager.LevelPlayerType levelPlayerType => arenaSettingsAsset != null
         ? arenaSettingsAsset.levelPlayerType
-        : ArenaSettingsAsset.LevelPlayerType.PlayerAndFlight;
+        : LevelManager.LevelPlayerType.PlayerAndFlight;
 
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
 
@@ -39,7 +35,11 @@ public class ArenaLevelManager : LevelManager
             ArenaDataManager.Instance.arenaSettingsAsset = arenaSettingsAsset;
         }
 
+        arenaMenu = GetComponentInChildren<ArenaMenu>();
+        arenaStatsMenu = GetComponentInChildren<ArenaStatsMenu>();
+
         arenaMenu.ShowHide(false);
+        arenaStatsMenu.ShowHide(false);
 
         SetupPlayerHooks();
         OnLocalPlayerModelChanged += SetupPlayerHooks;
@@ -59,6 +59,8 @@ public class ArenaLevelManager : LevelManager
         {
             arenaMenu.ToggleShowHide();
         }
+        
+        arenaStatsMenu.ShowHide(Input.GetButton("Stats"));
     }
 
     private void OnValidate()
@@ -84,38 +86,6 @@ public class ArenaLevelManager : LevelManager
                 teamConfigList.RemoveRange(numTeams, teamConfigList.Count - numTeams);
             }
         }
-    }
-
-    IEnumerator GameLost()
-    {
-        GameOver = true;
-
-        Debug.Log("You Lost");
-        InvokeOnGameOver(false);
-
-        Time.timeScale = 0;
-        FadeOut.SetActive(true);
-
-        yield return new WaitForSecondsRealtime(1);
-
-        HelperUtilities.UpdateCursorLock(false);
-        LoseScreen.SetActive(true);
-        FadeOut.SetActive(false);
-    }
-
-    IEnumerator GameWon()
-    {
-        GameOver = true;
-
-        Debug.Log("You Won");
-        InvokeOnGameOver(true);
-
-        Time.timeScale = 0;
-        FadeOut.SetActive(true);
-
-        yield return new WaitForSecondsRealtime(1);
-
-        SceneManager.LoadScene(EndGameCreditsSceneName);
     }
 
     public PlayerModel.PlayerType GetPlayerType(int playerId)

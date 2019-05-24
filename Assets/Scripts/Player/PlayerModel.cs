@@ -49,6 +49,8 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         }
     }
 
+    private bool isInArena => ArenaDataManager.Instance != null;
+
     #endregion
 
     private FlightModel privateFlightModel;
@@ -106,13 +108,20 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
 
         if (entity.IsOwner)
         {
-            var playerType = ArenaLevelManager.Instance.GetLocalPlayerType();
+            var playerType = PlayerType.Blue;
+
+            if (isInArena)
+            {
+                playerType = ArenaLevelManager.Instance.GetLocalPlayerType();
+            }
 
             var privateFlightGameObject = BoltNetwork.Instantiate(PlayerTypeMapping.flightPrefabs[playerType]);
             privateFlightModel = privateFlightGameObject.GetComponent<FlightModel>();
             privateFlightModel.Show(false);
 
-            if (ArenaLevelManager.Instance.levelPlayerType == ArenaSettingsAsset.LevelPlayerType.FlightOnly)
+            Debug.Log("Level Player Type: " + LevelManager.Instance.levelPlayerType);
+            
+            if (LevelManager.Instance.levelPlayerType == LevelManager.LevelPlayerType.FlightOnly)
             {
                 TakeControlOfPrivateFlight();
             }
@@ -124,7 +133,7 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         state.SetTransforms(state.PlayerTransform, transform);
         state.SetAnimator(_animator);
 
-        if (entity.IsOwner)
+        if (entity.IsOwner && isInArena)
         {
             state.ArenaPlayerId = ArenaDataManager.Instance.localPlayerId;
         }
@@ -140,8 +149,8 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         }
 
         PlayerInputController.PlayerInput playerInput = playerInputController.GetPlayerInput();
-        if (playerInput.enterFlight && privateFlightModel && ArenaLevelManager.Instance.levelPlayerType !=
-            ArenaSettingsAsset.LevelPlayerType.PlayerOnly)
+        if (playerInput.enterFlight && privateFlightModel && LevelManager.Instance.levelPlayerType !=
+            LevelManager.LevelPlayerType.PlayerOnly)
         {
             TakeControlOfPrivateFlight();
         }

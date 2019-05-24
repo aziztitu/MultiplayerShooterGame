@@ -38,6 +38,8 @@ public class FlightModel : BoltGameObjectEntity<IFlightState>
             return _controllingPlayer != null && cameraIsStable;
         }
     }
+    
+    private bool isInArena => ArenaDataManager.Instance != null;
 
     private void Awake()
     {
@@ -82,8 +84,8 @@ public class FlightModel : BoltGameObjectEntity<IFlightState>
         }
 
         FlightInputController.FlightInput flightInput = flightInputController.GetFlightInput();
-        if (controllingPlayer != null && flightInput.exitFlight && ArenaLevelManager.Instance.levelPlayerType !=
-            ArenaSettingsAsset.LevelPlayerType.FlightOnly)
+        if (controllingPlayer != null && flightInput.exitFlight && LevelManager.Instance.levelPlayerType !=
+            LevelManager.LevelPlayerType.FlightOnly)
         {
             RevokePlayerControl();
         }

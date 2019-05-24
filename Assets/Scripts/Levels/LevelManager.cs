@@ -6,11 +6,21 @@ using UnityEngine.SceneManagement;
 
 public abstract class LevelManager : SingletonMonoBehaviour<LevelManager>
 {
+    public enum LevelPlayerType
+    {
+        PlayerAndFlight,
+        PlayerOnly,
+        FlightOnly,
+    }
+
     [ReadOnly] public bool interactingWithUI = false;
 
     public event Action OnLocalPlayerModelChanged;
     public event Action<bool> OnGameOver;
     public bool GameOver { get; protected set; }
+
+    public virtual LevelManager.LevelPlayerType levelPlayerType { get; private set; } =
+        LevelManager.LevelPlayerType.PlayerAndFlight;
 
     [SerializeField] private PlayerModel _localPlayerModel;
 

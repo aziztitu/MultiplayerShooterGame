@@ -5,13 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Arena/Settings", fileName = "Arena Settings")]
 public class ArenaSettingsAsset: ScriptableObject
 {
-    public enum LevelPlayerType
-    {
-        PlayerAndFlight,
-        PlayerOnly,
-        FlightOnly,
-    }
-
     [Serializable]
     public class TeamSettings
     {
@@ -23,7 +16,7 @@ public class ArenaSettingsAsset: ScriptableObject
     public string arenaSceneName;
     public Sprite arenaCoverImage;
 
-    public LevelPlayerType levelPlayerType = LevelPlayerType.PlayerAndFlight;
+    public LevelManager.LevelPlayerType levelPlayerType = LevelManager.LevelPlayerType.PlayerAndFlight;
 
     public TeamSettings[] teams;
 

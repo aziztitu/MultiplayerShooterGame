@@ -21,7 +21,7 @@ public class ArenaCallbacks : Bolt.GlobalEventListener
         
         switch (ArenaLevelManager.Instance.levelPlayerType)
         {
-            case ArenaSettingsAsset.LevelPlayerType.FlightOnly:
+            case LevelManager.LevelPlayerType.FlightOnly:
                 CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
                     .ThirdPerson);
                 break;
