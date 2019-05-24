@@ -1658,6 +1658,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1486835020}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1486835022 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7123418259740027685, guid: 0be09f4742bcddd468113a422c2262fa,
+    type: 3}
+  m_PrefabInstance: {fileID: 1486835020}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1582112703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1705,6 +1717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamListContainer: {fileID: 90553217}
   serverTools: {fileID: 484747455}
+  startGameBtn: {fileID: 1486835022}
   arenaLobbyTeamUIPrefab: {fileID: 4180669934628541063, guid: 880e787961bcb8948b2728ef63f2c9e3,
     type: 3}
   sceneToGoBack_Server: Match Creation Menu

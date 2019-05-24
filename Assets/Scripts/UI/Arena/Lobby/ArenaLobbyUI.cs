@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BasicTools.ButtonInspector;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,6 +12,7 @@ public class ArenaLobbyUI : MonoBehaviour
 {
     public GameObject teamListContainer;
     public GameObject serverTools;
+    public Button startGameBtn;
     public GameObject arenaLobbyTeamUIPrefab;
     public string sceneToGoBack_Server = "";
     public string sceneToGoBack_Client = "";
@@ -84,15 +87,25 @@ public class ArenaLobbyUI : MonoBehaviour
     {
         if (BoltNetwork.IsServer)
         {
-            string matchName = Guid.NewGuid().ToString();
-            BoltNetwork.SetServerInfo(matchName, new ArenaLobby.RoomInfo()
-            {
-                isAccepting = false
-            });
-
-            ArenaDataManager.Instance.DisconnectUnassignedPlayers();
-            BoltNetwork.LoadScene(ArenaDataManager.Instance.arenaSettingsAsset.arenaSceneName);
+            StartCoroutine(StartGameSafely());
         }
+    }
+
+    IEnumerator StartGameSafely()
+    {
+        string matchName = Guid.NewGuid().ToString();
+        BoltNetwork.SetServerInfo(matchName, new ArenaLobby.RoomInfo()
+        {
+            isAccepting = false
+        });
+
+        startGameBtn.interactable = false;
+        startGameBtn.GetComponentInChildren<TextMeshProUGUI>().text = "Loading Arena...";
+        
+        yield return new WaitForSecondsRealtime(3f);
+
+        ArenaDataManager.Instance.DisconnectUnassignedPlayers();
+        BoltNetwork.LoadScene(ArenaDataManager.Instance.arenaSettingsAsset.arenaSceneName);
     }
 
     void OnTeamInfoChanged(int changedTeamInfo)

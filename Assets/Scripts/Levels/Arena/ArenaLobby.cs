@@ -18,9 +18,9 @@ public class ArenaLobby : Bolt.GlobalEventListener
         ArenaDataManager.RemoveOnReadyListener(OnArenaDataManagerReady);
     }
 
-    public override void Connected(BoltConnection connection)
+    public override void SceneLoadRemoteDone(BoltConnection connection)
     {
-        base.Connected(connection);
+        base.SceneLoadRemoteDone(connection);
         
         Debug.Log("Connected");
 
@@ -35,6 +35,11 @@ public class ArenaLobby : Bolt.GlobalEventListener
         {
             ArenaDataManager.Instance.OnBoltPlayerConnected(connection, joinResult);
         }
+    }
+
+    public override void Connected(BoltConnection connection)
+    {
+        base.Connected(connection);
     }
 
     public override void Disconnected(BoltConnection connection)

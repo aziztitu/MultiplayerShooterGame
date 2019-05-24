@@ -281,6 +281,9 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
                 }
                 else if (arenaPlayerConnectionDict.ContainsKey(arenaPlayerInfo.playerId))
                 {
+//                    Debug.Log("Checking Ping...");
+//                    Debug.Log("Ping Network: " + arenaPlayerConnectionDict[arenaPlayerInfo.playerId].PingNetwork);
+//                    Debug.Log("Ping Aliased: " + arenaPlayerConnectionDict[arenaPlayerInfo.playerId].PingAliased);
                     ping = arenaPlayerConnectionDict[arenaPlayerInfo.playerId].PingNetwork;
                 }
 
