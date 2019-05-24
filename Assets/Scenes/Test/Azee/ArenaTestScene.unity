@@ -2826,6 +2826,11 @@ PrefabInstance:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 644142619086206645, guid: 4cfceb193ddf1fb41a0d441072a5a5b0,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 644142620689268647, guid: 4cfceb193ddf1fb41a0d441072a5a5b0,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -3029,17 +3034,17 @@ PrefabInstance:
     - target: {fileID: 8138990349579493215, guid: 4cfceb193ddf1fb41a0d441072a5a5b0,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8138990349579493215, guid: 4cfceb193ddf1fb41a0d441072a5a5b0,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8138990349579493215, guid: 4cfceb193ddf1fb41a0d441072a5a5b0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -30
       objectReference: {fileID: 0}
     - target: {fileID: 8138990349579493215, guid: 4cfceb193ddf1fb41a0d441072a5a5b0,
         type: 3}
