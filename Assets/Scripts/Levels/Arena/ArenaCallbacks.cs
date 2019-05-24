@@ -18,6 +18,18 @@ public class ArenaCallbacks : Bolt.GlobalEventListener
         {
             Instantiate(ArenaLevelManager.Instance.CinemachineCameraRigPrefab);
         }
+        
+        switch (ArenaLevelManager.Instance.levelPlayerType)
+        {
+            case ArenaSettingsAsset.LevelPlayerType.FlightOnly:
+                CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+                    .ThirdPerson);
+                break;
+            default:
+                CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+                    .FirstPerson);
+                break;
+        }
     }
 
     private void Start()

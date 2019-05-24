@@ -24,6 +24,10 @@ public class ArenaLevelManager : LevelManager
 
     public List<ArenaTeamConfig> teamConfigList = new List<ArenaTeamConfig>();
 
+    public ArenaSettingsAsset.LevelPlayerType levelPlayerType => arenaSettingsAsset != null
+        ? arenaSettingsAsset.levelPlayerType
+        : ArenaSettingsAsset.LevelPlayerType.PlayerAndFlight;
+
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
 
     private new void Awake()
@@ -142,8 +146,6 @@ public class ArenaLevelManager : LevelManager
         if (spawnPoint != null)
         {
             ArenaCallbacks.SpawnPlayer(spawnPoint.transform.position, spawnPoint.transform.rotation);
-            CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
-                .FirstPerson);
         }
     }
 

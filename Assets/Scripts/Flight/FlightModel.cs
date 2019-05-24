@@ -82,7 +82,8 @@ public class FlightModel : BoltGameObjectEntity<IFlightState>
         }
 
         FlightInputController.FlightInput flightInput = flightInputController.GetFlightInput();
-        if (flightInput.exitFlight)
+        if (controllingPlayer != null && flightInput.exitFlight && ArenaLevelManager.Instance.levelPlayerType !=
+            ArenaSettingsAsset.LevelPlayerType.FlightOnly)
         {
             RevokePlayerControl();
         }

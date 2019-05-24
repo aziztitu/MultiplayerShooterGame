@@ -22,11 +22,25 @@ public abstract class StatefulCinemachineCamera : MonoBehaviour
 
     public bool IsActive { get; private set; }
 
+    private bool isInitialized = false;
+    protected event Action onInitialization;
+
     protected void Awake()
     {
         _virtualCamera = GetComponentInChildren<CinemachineVirtualCameraBase>();
         _virtualCamera.enabled = false;
         Debug.Log("Assigning Virtual Camera: " + VirtualCamera);
+
+        isInitialized = true;
+
+        onInitialization?.Invoke();
+        if (onInitialization != null)
+        {
+            foreach (Delegate d in onInitialization.GetInvocationList())
+            {
+                onInitialization -= (Action) d;
+            }
+        }
     }
 
     protected void Start()
@@ -35,6 +49,15 @@ public abstract class StatefulCinemachineCamera : MonoBehaviour
 
     public void Activate(object stateData = null)
     {
+        if (!isInitialized)
+        {
+            onInitialization += () =>
+            {
+                Activate(stateData);
+            };
+            return;
+        }
+        
         IsActive = true;
         this.stateData = stateData;
         _virtualCamera.enabled = true;
@@ -44,6 +67,12 @@ public abstract class StatefulCinemachineCamera : MonoBehaviour
 
     public void Deactivate()
     {
+        if (!isInitialized)
+        {
+            onInitialization += Deactivate;
+            return;
+        }
+        
         IsActive = false;
         stateData = null;
         _virtualCamera.enabled = false;

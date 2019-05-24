@@ -13,6 +13,7 @@ public class SingletonMonoBehaviour<T>: MonoBehaviour where T: SingletonMonoBeha
     }
 
     private static readonly List<Action<T>> OnSingletonReadyListeners = new List<Action<T>>();
+    private static readonly List<Action<T>> OnSingletonReadyListeners_OneShot = new List<Action<T>>();
 
     protected void Awake()
     {
@@ -34,15 +35,33 @@ public class SingletonMonoBehaviour<T>: MonoBehaviour where T: SingletonMonoBeha
         {
             onSingletonReadyListener(Instance);
         }
+
+        foreach (var action in OnSingletonReadyListeners_OneShot)
+        {
+            action(Instance);
+        }
+        OnSingletonReadyListeners_OneShot.Clear();
     }
 
-    public static void AddOnSingletonReadyListener(Action<T> action)
+    public static void AddOnSingletonReadyListener(Action<T> action, bool oneShot = false)
     {
         if (Instance != null)
         {
             action(Instance);
+
+            if (oneShot)
+            {
+                return;
+            }
         }
-        
-        OnSingletonReadyListeners.Add(action);
+
+        if (oneShot)
+        {
+            OnSingletonReadyListeners_OneShot.Add(action);
+        }
+        else
+        {
+            OnSingletonReadyListeners.Add(action);
+        }
     }
 }

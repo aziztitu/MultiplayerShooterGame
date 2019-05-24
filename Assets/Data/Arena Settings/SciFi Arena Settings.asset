@@ -19,3 +19,5 @@ MonoBehaviour:
   teams:
   - maxCapacity: 1
     defaultPlayerType: 0
+  - maxCapacity: 1
+    defaultPlayerType: 1

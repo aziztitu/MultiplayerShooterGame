@@ -111,6 +111,11 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
             var privateFlightGameObject = BoltNetwork.Instantiate(PlayerTypeMapping.flightPrefabs[playerType]);
             privateFlightModel = privateFlightGameObject.GetComponent<FlightModel>();
             privateFlightModel.Show(false);
+
+            if (ArenaLevelManager.Instance.levelPlayerType == ArenaSettingsAsset.LevelPlayerType.FlightOnly)
+            {
+                TakeControlOfPrivateFlight();
+            }
         }
     }
 
@@ -135,7 +140,16 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         }
 
         PlayerInputController.PlayerInput playerInput = playerInputController.GetPlayerInput();
-        if (playerInput.enterFlight && privateFlightModel)
+        if (playerInput.enterFlight && privateFlightModel && ArenaLevelManager.Instance.levelPlayerType !=
+            ArenaSettingsAsset.LevelPlayerType.PlayerOnly)
+        {
+            TakeControlOfPrivateFlight();
+        }
+    }
+
+    void TakeControlOfPrivateFlight()
+    {
+        if (flightModelInControl == null && privateFlightModel)
         {
             privateFlightModel.transform.position = transform.position;
             privateFlightModel.transform.rotation = transform.rotation;
@@ -172,8 +186,11 @@ public class PlayerModel : BoltGameObjectEntity<IPlayerState>
         state.IsGameObjectActive = false;
 //        playerHUDController.Show(false);
 
-        CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
-            .ThirdPerson);
+        CinemachineCameraManager.AddOnSingletonReadyListener((cinemachineCameraManagerInstance) =>
+        {
+            CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState
+                .ThirdPerson);
+        });
     }
 
     public void OnFlightControlRevoked()

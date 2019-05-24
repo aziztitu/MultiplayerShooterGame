@@ -76,17 +76,21 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
     // Start is called before the first frame update
     void Start()
     {
+        CheckAndSwitchCamera();
     }
 
     // Update is called once per frame
     void Update()
     {
-        CheckAndSwitchCamera();
-
         if (Input.GetKeyDown(KeyCode.End))
         {
             HelperUtilities.UpdateCursorLock(Cursor.visible);
         }
+    }
+
+    private void OnDestroy()
+    {
+        HelperUtilities.UpdateCursorLock(false);
     }
 
     void CheckAndSwitchCamera(object stateData = null)
@@ -98,10 +102,11 @@ public class CinemachineCameraManager : SingletonMonoBehaviour<CinemachineCamera
         {
             if (statefulCinemachineCamera.cinemachineCameraState == _currentState)
             {
-                if (!statefulCinemachineCamera.IsActive)
+                /*if (!statefulCinemachineCamera.IsActive)
                 {
                     camerasToActivate.Add(statefulCinemachineCamera);
-                }
+                }*/
+                camerasToActivate.Add(statefulCinemachineCamera);
             }
             else
             {

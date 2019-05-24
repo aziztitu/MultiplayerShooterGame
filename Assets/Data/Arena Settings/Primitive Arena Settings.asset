@@ -15,7 +15,7 @@ MonoBehaviour:
   arenaName: Primitive
   arenaSceneName: ArenaTestScene
   arenaCoverImage: {fileID: 21300000, guid: 2b0efbcd5c195b240a40861e5d58e237, type: 3}
-  levelPlayerType: 0
+  levelPlayerType: 2
   teams:
   - maxCapacity: 1
     defaultPlayerType: 0
