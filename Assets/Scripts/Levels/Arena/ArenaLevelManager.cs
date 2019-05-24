@@ -35,8 +35,8 @@ public class ArenaLevelManager : LevelManager
             ArenaDataManager.Instance.arenaSettingsAsset = arenaSettingsAsset;
         }
 
-        arenaMenu = GetComponentInChildren<ArenaMenu>();
-        arenaStatsMenu = GetComponentInChildren<ArenaStatsMenu>();
+        arenaMenu = GetComponentInChildren<ArenaMenu>(true);
+        arenaStatsMenu = GetComponentInChildren<ArenaStatsMenu>(true);
 
         arenaMenu.ShowHide(false);
         arenaStatsMenu.ShowHide(false);
@@ -111,7 +111,7 @@ public class ArenaLevelManager : LevelManager
             LocalPlayerModel.DestroyPlayer();
         }
 
-        var arenaTeamInfo = ArenaDataManager.Instance.GetArenaTeamInfo(ArenaDataManager.Instance.localPlayerId);
+        var arenaTeamInfo = ArenaDataManager.Instance.GetArenaTeamInfoForPlayer(ArenaDataManager.Instance.localPlayerId);
         Transform spawnPoint = teamConfigList[arenaTeamInfo.teamId].spawnPointsRandomizer.GetRandomItem();
         if (spawnPoint != null)
         {

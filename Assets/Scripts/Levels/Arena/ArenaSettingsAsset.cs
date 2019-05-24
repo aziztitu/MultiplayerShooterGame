@@ -8,6 +8,8 @@ public class ArenaSettingsAsset: ScriptableObject
     [Serializable]
     public class TeamSettings
     {
+        public string teamName;
+        public Color teamColor;
         public int maxCapacity;
         public PlayerModel.PlayerType defaultPlayerType;
     }

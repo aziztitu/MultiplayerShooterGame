@@ -17,7 +17,11 @@ MonoBehaviour:
   arenaCoverImage: {fileID: 21300000, guid: 2b0efbcd5c195b240a40861e5d58e237, type: 3}
   levelPlayerType: 0
   teams:
-  - maxCapacity: 1
+  - teamName: Team A
+    teamColor: {r: 0.11525454, g: 0.2666775, b: 0.6603774, a: 1}
+    maxCapacity: 1
     defaultPlayerType: 0
-  - maxCapacity: 1
+  - teamName: Team B
+    teamColor: {r: 0.5660378, g: 0.16984215, b: 0.1254895, a: 1}
+    maxCapacity: 1
     defaultPlayerType: 1

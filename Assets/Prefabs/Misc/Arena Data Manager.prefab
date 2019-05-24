@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arenaSettingsAsset: {fileID: 0}
+  pingRefreshInterval: 5
   arenaTeamInfos: []
   unassignedPlayers: []
   refreshTeamInfos_Btn: 0

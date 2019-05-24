@@ -24,6 +24,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     {
         public int teamId = -1;
         public string teamName = "";
+        public Color teamColor = Color.black;
+        public int kills = 0;
         public int maxCapacity = -1;
         public List<ArenaPlayerInfo> arenaPlayerInfos = new List<ArenaPlayerInfo>();
     }
@@ -43,10 +45,10 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     }
 
     public float pingRefreshInterval = 5f;
-    
+
     public List<ArenaTeamInfo> arenaTeamInfos = new List<ArenaTeamInfo>();
     public List<ArenaPlayerInfo> unassignedPlayers = new List<ArenaPlayerInfo>();
-    
+
     public int localPlayerId { get; private set; } = -1;
 
     [Button("Refresh Team Infos", "RefreshTeamInfosFromState")]
@@ -95,7 +97,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     /**
      * [Only called in Client]
      */
-    public event Action OnTeamInfosRefreshed;
+    public event Action OnAllTeamInfosRefreshed;
 
     /**
      * [Only called in Client]
@@ -214,7 +216,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         return arenaPlayerInfoDict.ContainsKey(playerId) ? arenaPlayerInfoDict[playerId] : null;
     }
 
-    public ArenaTeamInfo GetArenaTeamInfo(int playerId)
+    public ArenaTeamInfo GetArenaTeamInfoForPlayer(int playerId)
     {
         var playerInfo = GetArenaPlayerInfo(playerId);
         if (playerInfo != null && playerInfo.playerId >= 0)
@@ -223,6 +225,16 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         }
 
         return null;
+    }
+
+    public ArenaTeamInfo GetArenaTeamInfo(int teamId)
+    {
+        return teamId >= 0 && teamId < arenaTeamInfos.Count ? arenaTeamInfos[teamId] : null;
+    }
+
+    public ArenaSettingsAsset.TeamSettings GetArenaTeamSettings(int teamId)
+    {
+        return (teamId >= 0 && teamId < arenaSettingsAsset.teams.Length) ? arenaSettingsAsset.teams[teamId] : null;
     }
 
     #region Server Methods
@@ -236,7 +248,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             arenaTeamInfos.Add(new ArenaTeamInfo
             {
                 teamId = i,
-                teamName = $"Team {(char) ('A' + i)}",
+                teamName = arenaSettingsAsset.teams[i].teamName,
+                teamColor = arenaSettingsAsset.teams[i].teamColor,
                 maxCapacity = arenaSettingsAsset.teams[i].maxCapacity
             });
         }
@@ -273,7 +286,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
                 arenaPlayerInfo.ping = ping;
             }
-            
+
             ApplyTeamInfosToState();
 
             yield return new WaitForSecondsRealtime(pingRefreshInterval);
@@ -462,6 +475,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     {
         stateTeamInfo.TeamId = teamInfo.teamId;
         stateTeamInfo.TeamName = teamInfo.teamName;
+        stateTeamInfo.TeamColor = teamInfo.teamColor;
+        stateTeamInfo.Kills = teamInfo.kills;
         stateTeamInfo.MaxCapacity = teamInfo.maxCapacity;
 
         for (int j = 0;
@@ -501,7 +516,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             arenaTeamInfos.Add(CreateFromState(stateTeamInfo));
         }
 
-        OnTeamInfosRefreshed?.Invoke();
+        OnAllTeamInfosRefreshed?.Invoke();
     }
 
     void RefreshUnassignedPlayersFromState()
@@ -549,6 +564,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         {
             teamId = stateTeamInfo.TeamId,
             teamName = stateTeamInfo.TeamName,
+            teamColor = stateTeamInfo.TeamColor,
+            kills = stateTeamInfo.Kills,
             maxCapacity = stateTeamInfo.MaxCapacity
         };
 

@@ -15,7 +15,6 @@ public class ArenaLobbyUI : MonoBehaviour
     public string sceneToGoBack_Client = "";
 
     private List<ArenaLobbyTeamUI> teamUIList = new List<ArenaLobbyTeamUI>();
-    private bool initializedListeners = false;
 
     [Button("Refresh All Teams", "RefreshAllTeams")]
     public bool refreshAllItems_Btn;
@@ -33,7 +32,7 @@ public class ArenaLobbyUI : MonoBehaviour
         ArenaDataManager.Instance.OnTeamInfoChanged -= OnTeamInfoChanged;
         if (!BoltNetwork.IsServer)
         {
-            ArenaDataManager.Instance.OnTeamInfosRefreshed -= RefreshAllTeams;
+            ArenaDataManager.Instance.OnAllTeamInfosRefreshed -= RefreshAllTeams;
             ArenaDataManager.Instance.OnUnassignedPlayersRefreshed -= RefreshUnassigned;
         }
     }
@@ -114,7 +113,7 @@ public class ArenaLobbyUI : MonoBehaviour
         }
         else
         {
-            ArenaDataManager.Instance.OnTeamInfosRefreshed += RefreshAllTeams;
+            ArenaDataManager.Instance.OnAllTeamInfosRefreshed += RefreshAllTeams;
             ArenaDataManager.Instance.OnUnassignedPlayersRefreshed += RefreshUnassigned;
 
             RefreshAllTeams();
