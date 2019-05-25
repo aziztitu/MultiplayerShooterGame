@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArenaMenu : MonoBehaviour
 {
+    public Button respawnBtn;
+    
     public void ToggleShowHide()
     {
         gameObject.SetActive(!gameObject.activeSelf);
@@ -39,5 +42,11 @@ public class ArenaMenu : MonoBehaviour
         {
             LevelManager.Instance.interactingWithUI = false;
         }
+    }
+    
+    public void EnableEndGameMode(int winnerTeamId)
+    {
+        respawnBtn.interactable = false;
+        respawnBtn.gameObject.SetActive(false);
     }
 }

@@ -243,6 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0975fefeaa47478980a39ccce59b36cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  respawnBtn: {fileID: 2819675613820856683}
 --- !u!1 &379849313135567374
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,7 +653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.7254902}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -823,6 +824,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 5042614459836285518}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2819675613820856683 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7123418259740027685, guid: 0be09f4742bcddd468113a422c2262fa,
+    type: 3}
+  m_PrefabInstance: {fileID: 5042614459836285518}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6104832180342787866
 PrefabInstance:
   m_ObjectHideFlags: 0

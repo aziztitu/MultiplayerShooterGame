@@ -122,6 +122,7 @@ public class ArenaLevelManager : LevelManager
             LocalPlayerModel.DestroyPlayer();
         }
 
+        arenaMenu.EnableEndGameMode(winnerTeamId);
         arenaStatsMenu.EnableEndGameMode(winnerTeamId);
         
         CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState.FreeFly);
