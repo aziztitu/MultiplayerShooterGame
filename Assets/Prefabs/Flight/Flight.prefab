@@ -174,8 +174,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxRegularSpeed: 1
   maxBoostSpeed: 3
-  acceleration: 5
-  deceleration: 5
+  acceleration: 3
+  deceleration: 3
+  drag: 3
   alignToCameraSpeed: 10
   maxStrafeRoll: 30
   strafeRollSpeed: 10

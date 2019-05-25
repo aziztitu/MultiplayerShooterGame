@@ -9,6 +9,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     public float maxBoostSpeed = 3;
     public float acceleration = 5;
     public float deceleration = 5;
+    public float drag = 3;
     public float alignToCameraSpeed = 10;
     public float maxStrafeRoll = 45;
     public float strafeRollSpeed = 5;
@@ -25,7 +26,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
     private float targetSpeed = 0;
     private FlightModel _flightModel;
     private Rigidbody _rigidbody;
-    private Vector3 curInputDir = Vector3.zero;
+    private Vector3 curInput = Vector3.zero;
 
     private void Awake()
     {
@@ -98,10 +99,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
             inputVector.Normalize();
         }
         
-        if (inputVector.magnitude > 0)
-        {
-            curInputDir = inputVector.normalized;
-        }
+        curInput = Vector3.Lerp(curInput, inputVector, BoltNetwork.FrameDeltaTime * drag);
 
         targetSpeed = inputVector.magnitude * (flightInput.boost ? maxBoostSpeed : maxRegularSpeed);
 
@@ -116,7 +114,7 @@ public class FlightMovementController : Bolt.EntityBehaviour<IFlightState>
             curSpeed = Mathf.Max(curSpeed, targetSpeed);
         }
 
-        transform.position += curInputDir * curSpeed;
+        transform.position += curInput * curSpeed;
 
         float roll = -flightInput.strafeHorizontal * maxStrafeRoll;
         Quaternion avatarLocalRot = _flightModel.flightAvatar.transform.localRotation;
