@@ -15,6 +15,7 @@ public class ArenaLevelManager : LevelManager
 
     public ArenaMenu arenaMenu { get; private set; }
     public ArenaStatsMenu arenaStatsMenu { get; private set; }
+    public AutoRespawnerUI autoRespawnerUi { get; private set; }
     public bool roundEnded { get; private set; } = false;
 
     public string MultiplayerSceneName = "Multiplayer Menu";
@@ -40,9 +41,11 @@ public class ArenaLevelManager : LevelManager
 
         arenaMenu = GetComponentInChildren<ArenaMenu>(true);
         arenaStatsMenu = GetComponentInChildren<ArenaStatsMenu>(true);
+        autoRespawnerUi = GetComponentInChildren<AutoRespawnerUI>(true);
 
         arenaMenu.ShowHide(false);
         arenaStatsMenu.ShowHide(false);
+        autoRespawnerUi.ShowHide(false);
 
         SetupPlayerHooks();
         OnLocalPlayerModelChanged += SetupPlayerHooks;
@@ -57,7 +60,11 @@ public class ArenaLevelManager : LevelManager
     {
         if (LocalPlayerModel)
         {
-            LocalPlayerModel.health.OnDeath.AddListener((killerPlayerId) => { arenaMenu.ShowHide(true); });
+            LocalPlayerModel.health.OnDeath.AddListener((killerPlayerId) =>
+            {
+//                arenaMenu.ShowHide(true);
+                autoRespawnerUi.ShowHide(true);
+            });
         }
     }
 
