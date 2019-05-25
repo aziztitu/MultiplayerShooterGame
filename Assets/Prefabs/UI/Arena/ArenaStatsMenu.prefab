@@ -771,6 +771,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0269ac3c26641b39e82ee322b4f0ace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleBG: {fileID: 8838659652243340417}
+  titleText: {fileID: 5130533258100020120}
+  titleBorder: {fileID: 8135220918988749168}
   teamStatsUIPrefab: {fileID: 5090439728515513149, guid: 50347c05a9b025445a913d34837ebf8d,
     type: 3}
   teamListContainer: {fileID: 7457303317991996528}

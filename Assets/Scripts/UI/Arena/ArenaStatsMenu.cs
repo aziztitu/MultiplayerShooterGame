@@ -1,10 +1,17 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArenaStatsMenu : MonoBehaviour
 {
+    public Image titleBG;
+    public TextMeshProUGUI titleText;
+    public Image titleBorder;
     public GameObject teamStatsUIPrefab;
     public Transform teamListContainer;
+
+    public bool stayOn => ArenaLevelManager.Instance.roundEnded;
 
     private List<TeamStatsUI> teamStatsUIList = new List<TeamStatsUI>();
 
@@ -98,6 +105,14 @@ public class ArenaStatsMenu : MonoBehaviour
         {
             RefreshUnassigned();
         }
+    }
+    
+    public void EnableEndGameMode(int winnerTeamId)
+    {
+        var winnerTeamInfo = ArenaDataManager.Instance.GetArenaTeamInfo(winnerTeamId);
+        titleText.text = $"{winnerTeamInfo.teamName} Wins";
+        titleBG.color = winnerTeamInfo.teamColor;
+        titleBorder.color = winnerTeamInfo.teamColor;
     }
 
     public void ToggleShowHide()

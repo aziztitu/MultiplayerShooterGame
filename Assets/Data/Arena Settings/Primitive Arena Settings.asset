@@ -25,3 +25,4 @@ MonoBehaviour:
     teamColor: {r: 0.5660378, g: 0.16984215, b: 0.1254895, a: 1}
     maxCapacity: 1
     defaultPlayerType: 1
+  roundDuration: 30

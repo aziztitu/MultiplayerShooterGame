@@ -29,6 +29,8 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
         public int kills = 0;
         public int maxCapacity = -1;
         public List<ArenaPlayerInfo> arenaPlayerInfos = new List<ArenaPlayerInfo>();
+
+        public int cumulativePlayerScore => arenaPlayerInfos.Sum(info => info.score);
     }
 
     [Serializable]
@@ -90,7 +92,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     /// [Only valid in Server]
     /// </summary>
     private IEnumerator pingRefresherCoroutine = null;
-    
+
     /// <summary>
     /// [Only valid in Server]
     /// </summary>
@@ -105,7 +107,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
     /// [Only valid in Server]
     /// </summary>
     public event Action<int> OnTeamInfoChanged;
-    
+
     /// <summary>
     /// [Only valid in Server]
     /// </summary>
@@ -271,7 +273,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             {
                 attackerPlayerInfo.score += (int) damage;
                 victimPlayerInfo?.attackers.Add(attackerPlayerId);
-                
+
                 OnTeamInfoChanged?.Invoke(attackerPlayerInfo.teamId);
 
                 // TODO: Apply Player Infos Individually
@@ -298,7 +300,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             if (victimPlayerInfo != null)
             {
                 ArenaTeamInfo killerTeamInfo = null;
-                
+
                 if (killerPlayerInfo != null)
                 {
                     killerPlayerInfo.kills++;
@@ -326,7 +328,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
                         OnTeamInfoChanged?.Invoke(arenaTeamInfo.teamId);
                     }
                 }
-                
+
                 victimPlayerInfo.deaths++;
                 OnTeamInfoChanged?.Invoke(victimPlayerInfo.teamId);
 
@@ -345,7 +347,7 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
                         OnTeamInfoChanged?.Invoke(assistPlayerInfo.teamId);
                     }
                 }
-                
+
                 victimPlayerInfo.attackers.Clear();
             }
 
@@ -359,6 +361,67 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
             playerDeathEvent.VictimPlayerId = victimPlayerId;
             playerDeathEvent.Send();
         }
+    }
+
+    public ArenaTeamInfo GetCurrentWinningTeamInfo()
+    {
+        List<ArenaTeamInfo> winningTeamInfos;
+
+        var teamsWithMaxKills = new List<ArenaTeamInfo>();
+        int maxKills = 0;
+        foreach (var arenaTeamInfo in arenaTeamInfos)
+        {
+            if (arenaTeamInfo.kills > maxKills)
+            {
+                teamsWithMaxKills.Clear();
+
+                maxKills = arenaTeamInfo.kills;
+                teamsWithMaxKills.Add(arenaTeamInfo);
+            }
+            else if (arenaTeamInfo.kills == maxKills)
+            {
+                teamsWithMaxKills.Add(arenaTeamInfo);
+            }
+        }
+
+        if (teamsWithMaxKills.Count > 1)
+        {
+            var teamsWithMaxScore = new List<ArenaTeamInfo>();
+            int maxScore = 0;
+            foreach (var arenaTeamInfo in teamsWithMaxKills)
+            {
+                int teamScore = arenaTeamInfo.cumulativePlayerScore;
+                if (teamScore > maxScore)
+                {
+                    teamsWithMaxScore.Clear();
+
+                    maxScore = teamScore;
+                    teamsWithMaxScore.Add(arenaTeamInfo);
+                }
+                else if (teamScore == maxScore)
+                {
+                    teamsWithMaxScore.Add(arenaTeamInfo);
+                }
+            }
+
+            winningTeamInfos = teamsWithMaxScore;
+        }
+        else
+        {
+            winningTeamInfos = teamsWithMaxKills;
+        }
+
+        if (winningTeamInfos.Count > 1)
+        {
+            HelperUtilities.Rearrange(winningTeamInfos);
+        }
+
+        if (winningTeamInfos.Count > 0)
+        {
+            return winningTeamInfos[0];
+        }
+
+        return null;
     }
 
 
@@ -447,6 +510,14 @@ public class ArenaDataManager : Bolt.EntityBehaviour<IArenaState>
 
             yield return new WaitForSecondsRealtime(1);
         } while (state.Timer > 0);
+
+
+        var winningTeamInfo = GetCurrentWinningTeamInfo();
+
+        var arenaRoundEndedEvent =
+            ArenaRoundEndedEvent.Create(GlobalTargets.Everyone, ReliabilityModes.ReliableOrdered);
+        arenaRoundEndedEvent.WinnerTeamID = winningTeamInfo?.teamId ?? -1;
+        arenaRoundEndedEvent.Send();
 
         countdownTimerCoroutine = null;
     }

@@ -38,4 +38,11 @@ public class ArenaCallbacks : Bolt.GlobalEventListener
         base.OnEvent(e);
         SpawnPlayer(e.Position, e.Rotation);
     }
+
+    public override void OnEvent(ArenaRoundEndedEvent e)
+    {
+        base.OnEvent(e);
+        
+        ArenaLevelManager.Instance.OnRoundEnded(e.WinnerTeamID);
+    }
 }

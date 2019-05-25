@@ -15,6 +15,7 @@ public class ArenaLevelManager : LevelManager
 
     public ArenaMenu arenaMenu { get; private set; }
     public ArenaStatsMenu arenaStatsMenu { get; private set; }
+    public bool roundEnded { get; private set; } = false;
 
     public string MultiplayerSceneName = "Multiplayer Menu";
 
@@ -26,7 +27,7 @@ public class ArenaLevelManager : LevelManager
 
     public new static ArenaLevelManager Instance => Get<ArenaLevelManager>();
 
-    public event Action onMatchStarted;
+    public event Action onRoundStarted;
 
     private new void Awake()
     {
@@ -49,7 +50,7 @@ public class ArenaLevelManager : LevelManager
 
     private void Start()
     {
-        OnMatchStarted();
+        OnRoundStarted();
     }
 
     private void SetupPlayerHooks()
@@ -66,8 +67,8 @@ public class ArenaLevelManager : LevelManager
         {
             arenaMenu.ToggleShowHide();
         }
-        
-        arenaStatsMenu.ShowHide(Input.GetButton("Stats"));
+
+        arenaStatsMenu.ShowHide(arenaStatsMenu.stayOn || Input.GetButton("Stats"));
     }
 
     private void OnValidate()
@@ -95,14 +96,29 @@ public class ArenaLevelManager : LevelManager
         }
     }
 
-    void OnMatchStarted()
+    void OnRoundStarted()
     {
+        roundEnded = false;
+        
         if (BoltNetwork.IsServer)
         {
             ArenaDataManager.Instance.ResetTimer();
         }
+
+        onRoundStarted?.Invoke();
+    }
+
+    public void OnRoundEnded(int winnerTeamId)
+    {
+        if (LocalPlayerModel != null)
+        {
+            LocalPlayerModel.DestroyPlayer();
+        }
+
+        arenaStatsMenu.EnableEndGameMode(winnerTeamId);
         
-        onMatchStarted?.Invoke();
+        CinemachineCameraManager.Instance.SwitchCameraState(CinemachineCameraManager.CinemachineCameraState.FreeFly);
+        roundEnded = true;
     }
 
     public PlayerModel.PlayerType GetPlayerType(int playerId)
@@ -123,17 +139,23 @@ public class ArenaLevelManager : LevelManager
 
     public void RespawnLocalPlayer()
     {
+        if (roundEnded)
+        {
+            return;
+        }
+        
         if (LocalPlayerModel != null)
         {
             if (LocalPlayerModel.health.isAlive && LocalPlayerModel.playerId.HasValue)
             {
                 ArenaDataManager.Instance.PlayerDied(-1, LocalPlayerModel.playerId.Value);
             }
-            
+
             LocalPlayerModel.DestroyPlayer();
         }
 
-        var arenaTeamInfo = ArenaDataManager.Instance.GetArenaTeamInfoForPlayer(ArenaDataManager.Instance.localPlayerId);
+        var arenaTeamInfo =
+            ArenaDataManager.Instance.GetArenaTeamInfoForPlayer(ArenaDataManager.Instance.localPlayerId);
         Transform spawnPoint = teamConfigList[arenaTeamInfo.teamId].spawnPointsRandomizer.GetRandomItem();
         if (spawnPoint != null)
         {
