@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Readme
   m_EditorClassIdentifier: 
   icon: {fileID: 2800000, guid: 6756ed7b80223ac4e8f026ce27541de4, type: 3}
-  title: Space Debris and Crates
+  title: Modular Sc-Fi Space Objects
   sections:
   - heading: More Sci-Fi Items?
     text: 

@@ -40,4 +40,8 @@ public class AuthMenu : MonoBehaviour
     {
         SceneManager.LoadScene(multiplayerMenuSceneName);
     }
+    
+    public void ExitGame() {
+        Application.Quit();
+    }
 }

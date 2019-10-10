@@ -70,7 +70,7 @@ PrefabInstance:
     - target: {fileID: 7690882421664031211, guid: 08c1f87746946de4187acea2a0dc71e9,
         type: 3}
       propertyPath: _sceneGuid
-      value: 6247737b-3461-4035-ae3e-602940756e7f
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7690882421664031211, guid: 08c1f87746946de4187acea2a0dc71e9,
         type: 3}

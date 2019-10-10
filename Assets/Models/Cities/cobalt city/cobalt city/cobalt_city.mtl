@@ -1,0 +1,86 @@
+newmtl default
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 0 0
+Ks 1 1 1
+Km 0
+
+newmtl default_city_platform_floors
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/c1v.jpg
+
+newmtl default_city_basic2
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0.792157 0.721569 0.611765
+Ks 1 1 1
+Km 0
+map_Kd /Maps/c12_02.jpg
+
+newmtl default_city_windows
+d 1
+Ns 0.75
+Ni 0
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/olq1b2.jpg
+
+newmtl default_platform_lower_lights
+d 1
+Ns 0.75
+Ni 0
+Ka 0.501961 1 0
+Kd 0.454902 0.803922 0.929412
+Ks 1 1 1
+Km 0
+
+newmtl default_bridge_glass
+d 0.714286
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 0 0 0
+Ks 1 1 1
+Km 0
+
+newmtl default_city_lights
+d 1
+Ns 0.75
+Ni 0
+Ka 0.00784314 0.94902 1
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_bridge_floors
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/gt12.jpg
+
+newmtl default_platform_signs
+d 1
+Ns 0.75
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/scn.jpg
+

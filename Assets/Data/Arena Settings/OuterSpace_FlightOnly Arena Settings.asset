@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b346e086dc44269aa39bee7ed695f7, type: 3}
+  m_Name: OuterSpace_FlightOnly Arena Settings
+  m_EditorClassIdentifier: 
+  arenaName: Outer Space
+  arenaSceneName: Arena_OuterSpace_FlightOnly
+  arenaCoverImage: {fileID: 21300000, guid: 47567b06e6f3d894bbe397316bd5dfcc, type: 3}
+  levelPlayerType: 2
+  teams:
+  - teamName: Team A
+    teamColor: {r: 0.11525454, g: 0.2666775, b: 0.6603774, a: 1}
+    maxCapacity: 5
+    defaultPlayerType: 0
+  - teamName: Team Z
+    teamColor: {r: 0.5660378, g: 0.16984215, b: 0.1254895, a: 1}
+    maxCapacity: 5
+    defaultPlayerType: 1
+  roundDuration: 300
